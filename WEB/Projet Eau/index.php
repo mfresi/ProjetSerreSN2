@@ -1,3 +1,5 @@
+
+<?php include ("class/capteurs.php"); ?>
 <head>
     <meta charset="utf-8">
     <title>LaProSerre</title>
@@ -126,7 +128,7 @@
                         <div class="col-md-4">
                             <div class="features_item sm-m-top-30">
                                 <div class="f_item_icon">
-                                    <img src="assets/over_temperature_80_85.png">
+                                    <img src="assets/icone-dicone-de-temperature-du-thermostat.png">
                                 </div>
                                 <div class="f_item_text">
                                     <h3>Temperature</h3>
@@ -138,7 +140,7 @@
                         <div class="col-md-4">
                             <div class="features_item sm-m-top-30">
                                 <div class="f_item_icon">
-                                    <img src="assets/tap-water_icon-icons.com_74471.ico">
+                                    <img src="assets/robinet.png">
                                 </div>
                                 <div class="f_item_text">
                                     <h3>Niveau 1</h3>
@@ -149,7 +151,7 @@
                         <div class="col-md-4">
                             <div class="features_item sm-m-top-30">
                                 <div class="f_item_icon">
-                                    <img src="assets/tap-water_icon-icons.com_74471.ico">
+                                    <img src="assets/robinet.png">
                                 </div>
                                 <div class="f_item_text">
                                     <h3>Niveau 2</h3>
@@ -160,7 +162,7 @@
                         <div class="col-md-4">
                             <div class="features_item sm-m-top-30">
                                 <div class="f_item_icon">
-                                    <img src="assets/tap-water_icon-icons.com_74471.ico">
+                                    <img src="assets/robinet.png">
                                 </div>
                                 <div class="f_item_text">
                                     <h3>Niveau 3</h3>
@@ -415,8 +417,8 @@
 </script>
 
  <?php
-  $conso = new capteurs;
+  //     $conso = new capteurs;
 
-  $conso->getWaterConsoPluie();
-  $conso->getWaterConsoCourante();
+  //$conso->getWaterConsoPluie();
+  //$conso->getWaterConsoCourante();
   ?>
