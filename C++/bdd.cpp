@@ -34,7 +34,7 @@ int main(int argc, char const * argv[])
     MYSQL *response;
     MYSQL *row;
 
-    strcut connection_details mysqlD;
+    struct connection_details mysqlD;
     mysqlD.server = "mysql-projet-serre-eau.alwaysdata.net";
     mysqlD.user = "231030_projet";
     mysqlD.password = "SerreEau1234";
