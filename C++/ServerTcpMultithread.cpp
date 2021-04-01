@@ -1,13 +1,13 @@
-#include systypes.h
-#include syssocket.h
-#include netinetin.h
-#include arpainet.h
-#include unistd.h
-#include stdio.h
-#include stdlib.h
-#include errno.h
-#include string.h
-#include thread
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <errno.h>
+#include <string.h>
+#include <thread>
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -41,7 +41,7 @@ int main()
     char bufferNiv2[512] = "haut";
     char bufferNiv3[512] = "haut";
     char bufferStopServer[512] = "Serveur arrêté";
-    char bufferClient[50] = {0};
+    char bufferClient[50] = { 0 };
     socklen_t recsize = sizeof(csin);
     int sockBind_err;
     int sockSend_err;
@@ -49,8 +49,6 @@ int main()
     int PORT = 9013;
     int opt = TRUE;
     bool etat = false;
-    int tueurDePorc = htons(csin.sin_port);
-    char tueurDebuffer[50];
 
     if (!erreur)
     {
@@ -59,9 +57,9 @@ int main()
         // gestion d'erreur du socket
         if (sock != INVALID_SOCKET)
         {
-            if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char )&opt, sizeof(opt))  0)
+            if (setsockopt(sock, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
             {
-                perror(setsockopt);
+                perror("setsockopt");
                 exit(EXIT_FAILURE);
             }
             // On montre à  l'utilisateur que le socket est créé
@@ -70,19 +68,19 @@ int main()
             sin.sin_addr.s_addr = htonl(INADDR_ANY);
             sin.sin_family = AF_INET;
             sin.sin_port = htons(PORT);
-             On bind le serveur
-            sockBind_err = bind(sock, (SOCKADDR )&sin, sizeof(sin));
+            // On bind le serveur
+            sockBind_err = bind(sock, (SOCKADDR *)&sin, sizeof(sin));
             // gestion d'erreur du bind
             if (sockBind_err != SOCKET_ERROR)
             {
                 printf("Patientez pendant que le client se connecte sur le port %d... \n", PORT);
-                // Le serveur Ã©coute se met en Ã©coute et on accepte 6 connexions max.
+                // Le serveur écoute se met en écoute et on accepte 6 connexions max.
                 listen(sock, 6);
-                // On reÃ§oit le message envoyÃ© par la source
+                // On reçoit le message envoyé par la source
                 do
                 {
                     // Le serveur accepte la communication avec la machine source
-                    csock = accept(sock, (SOCKADDR )&csin, &recsize);
+                    csock = accept(sock, (SOCKADDR *)&csin, &recsize);
                     printf("Un client se connecte avec la socket %d de %s sur le port %d \n", csock, inet_ntoa(csin.sin_addr), htons(csin.sin_port));
 
                     sockRecv_err = recv(csock, &bufferClient, sizeof(bufferClient), 0);
