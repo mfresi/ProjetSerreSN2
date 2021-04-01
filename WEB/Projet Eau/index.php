@@ -1,5 +1,8 @@
 
-<?php include ("class/capteurs.php"); ?>
+<?php include ("class/capteurs.php");
+?>
+
+
 <head>
     <meta charset="utf-8">
     <title>LaProSerre</title>
@@ -416,9 +419,10 @@
     //setInterval("addConsoValue()", 5000);
 </script>
 
- <?php
-  //     $conso = new capteurs;
+<?php 
+    $conso = new capteurs;
 
-  //$conso->getWaterConsoPluie();
-  //$conso->getWaterConsoCourante();
-  ?>
+    $conso->getWaterConsoPluie();
+    $conso->getWaterConsoCourante();
+    $conso->getConsoElec();
+?>
