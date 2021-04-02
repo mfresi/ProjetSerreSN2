@@ -1,33 +1,38 @@
 #include <iostream>
 #include <mysql/mysql.h>
- 
+#include <cstring>
+
 using namespace std;
- 
-int main()
+
+// command to compile file -> g++ nameFile.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient && ./output
+
+int main(void)
 {
-    char *host = "mysql-projet-serre-eau.alwaysdata.net";
-    char *user = "231030_projet"    
-    char *pass = "SerreEau1234";
-    char *db = "projet-serre-eau-bbdeau";
- 
-    MYSQL *sock;
-    sock = mysql_init(0);
-    if (sock) cout << "sock handle ok!" << endl;
-    else {
-         cout << "sock handle failed!" << mysql_error(sock) << endl;
+    MYSQL mysql;
+    char response;
+    int result;
+    const char * request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (12, 45, 24);";
+
+    mysql_init(&mysql);
+    
+    if(mysql_real_connect(&mysql,"mysql-projet-serre-eau.alwaysdata.net","231030_mattei","37pgmh55","projet-serre-eau_bddeau",0,NULL,0))
+    {
+        result = mysql_real_query(&mysql, request, strlen(request));
+
+        if (result == 0)
+        {
+            cout << "Insertion en base OK !" << endl;
+        }
+        else
+        {
+            cout << "Insertion en base PAS OK ! " << endl;
+        }
     }
- 
-    if (mysql_real_connect(sock, host, user, pass, db, 0, NULL, 0))
-         cout << "connection ok!" << endl;
-    else {
-         cout << "connection fail: " << mysql_error(sock) << endl;
+    else
+    {
+       cout << "Une erreur s'est produite lors de la connexion à la BDD!" << endl;
     }
- 
-    cout << "connection character set: " << mysql_character_set_name(sock) << endl;
- 
-    system("PAUSE");
- 
-    mysql_close(sock);
- 
-    return EXIT_SUCCESS;
+
+    mysql_close(&mysql);
+    return 0;
 }

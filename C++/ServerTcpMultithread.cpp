@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <thread>
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -46,7 +45,7 @@ int main()
     int sockBind_err;
     int sockSend_err;
     int sockRecv_err;
-    int PORT = 9013;
+    int PORT = 9012;
     int opt = TRUE;
     bool etat = false;
 
