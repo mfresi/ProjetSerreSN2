@@ -261,13 +261,23 @@
         type: 'line',
 
         // Les données
-        data: {
+        data: 
+        {
             labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
-            datasets: [{
-                label: 'Consommation d eau en fonction du temps',
+            datasets: 
+            [{
+                label: 'Consommation eau de pluie en fonction du temps',
+                backgrounColor: 'rgb(255, 99, 132)',
                 borderColor: 'rgb(255, 99, 132)',
-                data: [1,5,7,6,45,5,39,8,25, 9]
-            }]
+                data: [1,5,7,6,19,5,5,5,11,30,40,0,17,10]
+            },
+            {
+                label: 'Consommation eau courante en fonction du temps',
+                backgroundColor: 'rgb(100, 155, 188)',
+                borderColor: 'rgb(100, 155, 188)',
+                data: [10,15,13,1,18,7,4,0,5,20,6,14,20]
+            }
+            ]   
         },
 
         // Configuration options go here
