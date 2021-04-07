@@ -1,7 +1,7 @@
-<?php
+<?php include ("API/ConfigConnexion.php");
+?>
 
-$adress = '192.168.64.82';
-$port = 9013;
+<?php
 $buf = "*";
 
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
