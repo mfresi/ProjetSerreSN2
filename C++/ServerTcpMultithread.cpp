@@ -27,9 +27,9 @@ using namespace std;
 
 struct systemData
 {
-    float temperatureValue = 22.5;
-    bool waterLevelValue = 1;
-    int electricalConsommationValue = 14;
+    float temperatureValue;
+    bool waterLevelValue;
+    int electricalConsommationValue;
     
 } systemData;
 
@@ -38,6 +38,18 @@ void saveValueInCache(float temperature, bool waterLevel, int electricalConso)
     systemData.temperatureValue = temperature;
     systemData.waterLevelValue = waterLevel;
     systemData.electricalConsommationValue = electricalConso;
+}
+
+void verifEtatNiveauEau(int numberOfCapteur, int value)
+{
+    if (value == 1)
+    {
+        cout << "le capteur de niveau d'eau " << numberOfCapteur << " est à l'état haut" << endl;
+    }
+    else
+    {
+        cout << "le capteur de niveau d'eau est à l'état bas" << endl;
+    }
 }
 
 int main()
@@ -58,9 +70,9 @@ int main()
     char bufferInvalid[32] = "La chaine n'existe pas";
     char bufferDeco[512] = "deco";
     char bufferTemp[512] = "22.5";
-    char bufferNiv1[512] = "bas";
-    char bufferNiv2[512] = "haut";
-    char bufferNiv3[512] = "haut";
+    char bufferNiv1[512] = "0";
+    char bufferNiv2[512] = "1";
+    char bufferNiv3[512] = "1";
     char bufferStopServer[512] = "Serveur arrêté";
     char bufferClient[50] = {0};
     socklen_t recsize = sizeof(csin);
@@ -70,8 +82,6 @@ int main()
     int PORT = 9012;
     int opt = TRUE;
     bool etat = false;
-
-    // Création de l'objet mysql.
     MYSQL mysql;
     char response;
     int result;
@@ -79,7 +89,11 @@ int main()
     const char * login = "231030_mattei";
     const char * password = "37pgmh55";
     const char * bdd = "projet-serre-eau_bddeau";
-    const char * request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (12, 45, 23);";
+    const char * request = "INSERT INTO `consommation`(`electrique`) VALUES (23);";
+    float temperature;
+    int niveauEau1;
+    int niveauEau2;
+    int niveauEau3;
 
     if (!erreur)
     {
@@ -173,6 +187,9 @@ int main()
                             }
 
                             cout << "Chaine envoyée " << bufferTemp << endl;
+                            temperature = atof(bufferTemp);
+                            systemData.temperatureValue = temperature;
+                            cout << "Température dans le cache : " << systemData.temperatureValue << endl;
                         }
                         else
                         {
