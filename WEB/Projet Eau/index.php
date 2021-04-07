@@ -13,7 +13,6 @@
     <!--Google Font link-->
     <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
 
-
     <link rel="stylesheet" href="assets/css/swiper.min.css">
     <link rel="stylesheet" href="assets/css/animate.css">
     <link rel="stylesheet" href="assets/css/iconfont.css">
@@ -229,14 +228,12 @@
 
                             <script src="assets/js/vendor/jquery-1.11.2.min.js"></script>
                             <script src="assets/js/vendor/bootstrap.min.js"></script>
-                            <script src="JS/Capteurs.js"> </script>
                             <script src="assets/js/jquery.magnific-popup.js"></script>
                             <script src="assets/js/jquery.easing.1.3.js"></script>
                             <script src="assets/js/swiper.min.js"></script>
                             <script src="assets/js/jquery.collapse.js"></script>
                             <script src="assets/js/bootsnav.js"></script>
-
-
+                            <script src="JS/Capteurs.js"></script>
                             <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
                             <script src="assets/js/plugins.js"></script>
                             <script src="assets/js/main.js"></script>
@@ -252,8 +249,6 @@
 
 <script>
     //Déclaration des variables.
-
-    var refreshValuesTime = 2000;
 
     var ctx = document.getElementById('myChart').getContext('2d');
     var chart = new Chart(ctx, {
@@ -284,6 +279,7 @@
         options: {}
     });
 </script>
+
 <?php 
     $conso = new capteurs;
 

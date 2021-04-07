@@ -1,6 +1,6 @@
-<?php include ("API/ConfigConnexion.php");
-?>
+
 <?php
+include('ConfigConnexion.php');
 $buf = "niv2";
 
 $socket = socket_create(AF_INET, SOCK_STREAM, SOL_TCP);
