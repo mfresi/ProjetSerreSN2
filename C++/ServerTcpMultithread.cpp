@@ -12,6 +12,8 @@
 #include <errno.h>
 #include <string.h>
 #include <mysql/mysql.h>
+#include <unistd.h>
+#include <iostream>
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -20,6 +22,23 @@
 typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
+
+using namespace std;
+
+struct systemData
+{
+    float temperatureValue = 22.5;
+    bool waterLevelValue = 1;
+    int electricalConsommationValue = 14;
+    
+} systemData;
+
+void saveValueInCache(float temperature, bool waterLevel, int electricalConso)
+{
+    systemData.temperatureValue = temperature;
+    systemData.waterLevelValue = waterLevel;
+    systemData.electricalConsommationValue = electricalConso;
+}
 
 int main()
 {
@@ -76,7 +95,7 @@ int main()
                 exit(EXIT_FAILURE);
             }
             // On montre à  l'utilisateur que le socket est créé
-            printf("La socket %d est maintenant ouverte en mode TCPIP \n", sock);
+            cout << "La socket " << sock << " est maintenant ouverte en mode TCP IP" << endl;
 
             sin.sin_addr.s_addr = htonl(INADDR_ANY);
             sin.sin_family = AF_INET;
@@ -86,16 +105,16 @@ int main()
             // gestion d'erreur du bind
             if (sockBind_err != SOCKET_ERROR)
             {
-                printf("Patientez pendant que le client se connecte sur le port %d... \n", PORT);
+                cout << "Patientez pendant que le client se connecte sur le port " << PORT << endl;
                 // Connexion à la bade de donnée.
                 mysql_init(&mysql);
                 if (mysql_real_connect(&mysql, host, login, password, bdd, 0, NULL, 0))
                 {
-                    printf("Connexion à la BBD OK !\n");
+                    cout << "Connexion à la BDD OK !" << endl;
                 }
                 else
                 {
-                    printf("Une erreur s'est produite lors de la connexion à la BDD!\n");
+                    cout << "Une erreur s'est produite lors de la connexion à la BDD !" << endl;
                 }
                 // Le serveur écoute se met en écoute et on accepte 6 connexions max.
                 listen(sock, 6);
@@ -104,17 +123,17 @@ int main()
                 {
                     // Le serveur accepte la communication avec la machine source
                     csock = accept(sock, (SOCKADDR *)&csin, &recsize);
-                    printf("Un client se connecte avec la socket %d de %s sur le port %d \n", csock, inet_ntoa(csin.sin_addr), htons(csin.sin_port));
+                    cout << "Un client se connecte avec le socket " << csock << " de " << inet_ntoa(csin.sin_addr) << " sur le port " << htons(csin.sin_port) << endl;
                     sockRecv_err = recv(csock, &bufferClient, sizeof(bufferClient), 0);
                     // Gestion d'erreur du nouveau socket
                     if (sockRecv_err == -1)
                     {
-                        printf("erreur lors de la reception du message client \n");
+                        cout << "erreur lors de la reception du message client" << endl;
                     }
                     else
                     {
                         // Le serveur affiche le message reçu
-                        printf("Chaine reçu  %s \n", bufferClient);
+                        cout << "Chaine reçu " << bufferClient << endl;
                     }
                     if (bufferClient[0] == '*')
                     {
@@ -124,11 +143,12 @@ int main()
                         {
                             mysql_close(&mysql);
                             printf("Connexion à la base fermée\n");
-                            printf("Chaine envoyée  %s \n", bufferStopServer);
+                            cout << "Connexion à la base fermée" << endl;
+                            cout << "Chaine envoyée " << bufferStopServer << endl;
                         }
                         else
                         {
-                            printf("Erreur de transmission \n");
+                            cout << "Erreur de transmission" << endl;
 
                             shutdown(csock, 2);
                         }
@@ -145,18 +165,18 @@ int main()
 
                             if (result == 0)
                             {
-                                printf("Insertion en base OK !\n");
+                                cout << "Insertiion en base OK" << endl;
                             }
                             else
                             {
-                                printf("Insertion en base PAS OK !\n");
+                                cout << "Insertion en base PAS OK !" << endl;
                             }
 
-                            printf("Chaine envoyée  %s \n", bufferTemp);
+                            cout << "Chaine envoyée " << bufferTemp << endl;
                         }
                         else
                         {
-                            printf("Erreur de transmissionn \n");
+                            cout << "Erreur de transmission" << endl;
 
                             shutdown(csock, 2);
                         }
@@ -169,11 +189,11 @@ int main()
                         sockSend_err = send(csock, bufferNiv1, strlen(bufferNiv1), 0);
                         if (sockSend_err != SOCKET_ERROR)
                         {
-                            printf("Chaine envoyée  %s \n", bufferNiv1);
+                            cout << "Chaine envoyée " << bufferNiv1 << endl;
                         }
                         else
                         {
-                            printf("Erreur de transmission \n");
+                            cout << "Erreur de transmission" << endl;
 
                             shutdown(csock, 2);
                         }
@@ -186,11 +206,11 @@ int main()
                         sockSend_err = send(csock, bufferNiv2, strlen(bufferNiv2), 0);
                         if (sockSend_err != SOCKET_ERROR)
                         {
-                            printf("Chaine envoyée  %s \n", bufferNiv2);
+                            cout << "Chaine envoyée " << bufferNiv2 << endl;
                         }
                         else
                         {
-                            printf("Erreur de transmission \n");
+                            cout << "Erreur de transmission" << endl;
 
                             shutdown(csock, 2);
                         }
@@ -203,11 +223,11 @@ int main()
                         sockSend_err = send(csock, bufferNiv3, strlen(bufferNiv3), 0);
                         if (sockSend_err != SOCKET_ERROR)
                         {
-                            printf("Chaine envoyée  %s \n", bufferNiv3);
+                            cout << "Chaine envoyée " << bufferNiv3 << endl;
                         }
                         else
                         {
-                            printf("Erreur de transmission \n");
+                            cout << "Erreur de transmission" << endl;
 
                             shutdown(csock, 2);
                         }
@@ -219,11 +239,11 @@ int main()
                         sockSend_err = send(csock, bufferInvalid, strlen(bufferInvalid), 0);
                         if (sockSend_err != SOCKET_ERROR)
                         {
-                            printf("Chaine envoyée  %s \n", bufferInvalid);
+                            cout << "Chaine envoyée " << bufferInvalid << endl;
                         }
                         else
                         {
-                            printf("Erreur de transmission \n");
+                            cout << "Erreur de transmission" << endl;
 
                             shutdown(csock, 2);
                         }
@@ -232,17 +252,17 @@ int main()
             }
             else
             {
-                printf("Pas reussi à bind le server \n");
+                cout << "Pas réussi à bind le server" << endl;
             }
             // Fermeture des sockets.
-            printf("Fermeture de la socket... \n");
+            cout << "Fermeture de la socket..." << endl;
             close(sock);
             close(csock);
-            printf("Fermeture du serveur terminee \n");
+            cout << "Fermeture du serveur terminé" << endl;
         }
         else
         {
-            printf("Pas reussi à creer la socket \n");
+            cout << "Pas réussi à créer la socket" << endl;
         }
 
 #if defined(WIN32)
