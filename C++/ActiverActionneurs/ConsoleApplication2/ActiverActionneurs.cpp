@@ -1,19 +1,23 @@
 // ConsoleApplication2.cpp : Ce fichier contient la fonction 'main'. L'exécution du programme commence et se termine à cet endroit.
 //
 #include <iostream>
-#include <Windows.h>
-#include <iostream>
 #include <cstdlib>
 #include <time.h> 
+#include "../../../ConsoleApplication3/SystemData.h"
 	int main()
-	{
+	{	
+		SystemData Capteurs; //On récupere les informations dans le cache de SystemData
+		
 		srand(time(NULL));
 		int temp;
-		temp = rand() % 10;
+		temp = Capteurs.Temperature;
+		//temp = rand() % 10;
 		//cuve du bas
-		bool WaterLevel1 = 1;
+		bool WaterLevel1;
+		WaterLevel1 = Capteurs.NiveauEau1;
 		//cuve du haut niveau haut
-		bool WaterLevel3 = 0;
+		bool WaterLevel3;
+		WaterLevel3 = Capteurs.NiveauEau3; 
 
 		std::cout << temp;
 		std::cout << " Degres" << std::endl;
@@ -54,15 +58,18 @@
 			{
 				std::cout << " On peut activer la pompe \n";
 
-				while (WaterLevel3 != 1) {
+				if(WaterLevel3 == 0) {
 					//On laisse la pompe active tant que le niveau d'eau n'est pas suffisant
 					//On l'arrete au moment ou le Waterlvl3 arrive a 1
 					std::cout << "on laisse la pompe active \n";
-					Sleep(2000);
-					WaterLevel3 = rand() % 2;
+				
+					WaterLevel3 = 1;
 				}
-				std::cout << "Le niveau d'eau max a ete atteinds \n";
-				std::cout << "on eteinds la pompe \n";
+			 if (WaterLevel3 == 1) {
+					std::cout << "Le niveau d'eau max a ete atteinds \n";
+					std::cout << "on eteinds la pompe \n";
+				}
+				
 			}
 		}
 		if (temp >= 2 && WaterLevel1 == 1 && WaterLevel3 == 1)
@@ -70,7 +77,7 @@
 			std::cout << "On peut utiliser l'eau de pluie \n";
 		}
 		else {
-			std::cout << "On utilise l'eau courante";
+			std::cout << "On utilise l'eau courante \n";
 		}
 
 	}
