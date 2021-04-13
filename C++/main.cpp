@@ -1,6 +1,6 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
-// command to compile file -> g++ main.cpp class/TCPServeur.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient && ./output
+// command to compile file -> g++ main.cpp class/TCPServeur.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient -lpthread && ./output
 
 #include "class/TCPServeur.h"
 
@@ -14,6 +14,8 @@ struct systemData
 
 using namespace std;
 
+TCPServeur tcpServeur;
+
 class myServerEventListener : public TCPServerEventListener
 {
 public:
@@ -22,6 +24,31 @@ public:
         cout << "Un client se connecte avec la socket " << csock << " avec l'ip " << inet_ntoa(csinIp.sin_addr) << " sur le port " << htons(csinPort.sin_port) << endl;
     };
 };
+
+void clientSession()
+{
+    int resultReadBuffer;
+    bool resultWriteToClient;
+
+    resultReadBuffer = tcpServeur.readBuffer();
+    if (resultReadBuffer == true)
+    {
+        resultWriteToClient = tcpServeur.sendBufferToClient("18");
+
+        if (resultWriteToClient == true)
+        {
+            cout << "Chaine envoyée avec succès" << endl;
+        }
+        else
+        {
+            cout << "Pas réussi à envoyer la chaine" << endl;
+        }
+    }
+    else
+    {
+        cout << "Pas réussi à lire la chaine" << endl;
+    }
+}
 
 int main()
 {
@@ -34,11 +61,8 @@ int main()
 
     bool resultCreateSocket;
     bool resultBindServer;
-    int resultReadBuffer;
     bool resultAcceptCom;
-    bool resultWriteToClient;
     bool etat = false;
-    TCPServeur tcpServeur;
     myServerEventListener myEventListener;
 
     tcpServeur.addListener(&myEventListener);
@@ -59,30 +83,14 @@ int main()
 
                     if (resultAcceptCom == true)
                     {
-                        resultReadBuffer = tcpServeur.readBuffer();
-                        if (resultReadBuffer == true)
-                        {
-                            resultWriteToClient = tcpServeur.sendBufferToClient("18");
-
-                            if (resultWriteToClient == true)
-                            {
-                                cout << "Chaine envoyée avec succès" << endl;
-                            }
-                            else
-                            {
-                                cout << "Pas réussi à envoyer la chaine" << endl;
-                            }
-                        }
-                        else
-                        {
-                            cout << "Pas réussi à lire la chaine" << endl;
-                        }
+                        thread clientThread(clientSession);
+                        clientThread.detach();
                     }
                     else
                     {
                         cout << "Problème lorque le client essaie de se connecter" << endl;
                     }
-                } while(etat != true);
+                } while (etat != true);
             }
             else
             {
