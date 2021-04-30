@@ -1,4 +1,3 @@
-
 <?php
 include('ConfigConnexion.php');
 $buf = "niv3";

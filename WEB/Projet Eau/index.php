@@ -138,7 +138,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="col-md-4">
                             <div class="features_item sm-m-top-30">
                                 <div class="f_item_icon">
@@ -173,6 +172,28 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-md-4">
+                            <div class="features_item sm-m-top-30">
+                                <div class="f_item_icon">
+                                    <img src="assets/pompe.png">
+                                </div>
+                                <div class="f_item_text">
+                                    <h3>Pompe</h3>
+                                    <p id="Pompe"> </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="features_item sm-m-top-30">
+                                <div class="f_item_icon">
+                                    <img src="assets/robinet.png">
+                                </div>
+                                <div class="f_item_text">
+                                    <h3>Réseau Eau</h3>
+                                    <p id="WaterFlow"> </p>
+                                </div>
+                            </div>
+                        </div>
                 </div><!-- End off row -->
             </div><!-- End off container -->
         </section><!-- End off Featured Section-->

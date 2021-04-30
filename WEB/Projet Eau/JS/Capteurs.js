@@ -12,6 +12,15 @@ function getTemperature() {
         });
 }
 
+//Va permettre le refresh auto de la temperature (id de la div, text = les données retourné)
+function UpdateDivTemp(id, text) {
+    var e = document.getElementById(id).innerHTML = "La temperature est de " + text + "° C";
+    //Si on ne peut pas afficher
+    if (text == "") {
+        var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
+    }
+}
+
 function getNiv1() {
     //pour appeler une API on utilise la méthode fetch()
     fetch('API/niveau1.php').then((response) => response.json())
@@ -25,48 +34,30 @@ function getNiv1() {
             //console.log(error);
         });
 }
-//Va permettre le refresh auto de la temperature (id de la div, text = les données retourné)
-function UpdateDivTemp(id, text) {
-    var e = document.getElementById(id).innerHTML = "La temperature est de " + text + "° C";
-    //Si on ne peut pas afficher
-    if (text == false) {
-        var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
-    }
-}
 //Va permettre le refresh auto du niveau bas de la cuve (id de la div, text = les données retourné)
 function UpdateDivNiv1(id, text) {
+    var e = document.getElementById(id).innerHTML = "Le niveau d'eau 1 est à l'état " + text;
     //Si on ne peut pas afficher
-    if (text == false) {
+    if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
-    } else if (text == "haut") {
-        var e = document.getElementById(id).innerHTML = "L'eau de pluie est au niveau bas";
-    } else if (text == "bas") {
-        var e = document.getElementById(id).innerHTML = "L'eau de pluie est au niveau haut";
+    } else if (text == '0') {
+        var e = document.getElementById(id).innerHTML = "La cuve est a l'état bas";
     }
 }
 //Va permettre le refresh auto du niveau haut de la cuve (id de la div, text = les données retourné)
 function UpdateDivNiv2(id, text) {
+    var e = document.getElementById(id).innerHTML = "Le niveau d'eau 2 est à l'état " + text;
     //Si on ne peut pas afficher
-    if (text == false) {
+    if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
-    } else if (text == "bas") {
-        var e = document.getElementById(id).innerHTML = "La cuve a besoin d'être remplie";
-    } else if (text == "haut") {
-        var e = document.getElementById(id).innerHTML = "La cuve peut être utilisé";
-    }
-}
-//Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
-function UpdateDivNiv3(id, text) {
-    var e = document.getElementById(id).innerHTML = "Le niveau d'eau 3 est à l'état " + text;
-    //Si on ne peut pas afficher
-    if (text == false) {
-        var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
-    } else if (text == "bas") {
-        var e = document.getElementById(id).innerHTML = "La cuve peut etre encore remplie";
-    } else if (text == "haut") {
+    } else if (text == "0") {
+        var e = document.getElementById(id).innerHTML = "La cuve est a l'état bas";
+    } else if (text == "1") {
         var e = document.getElementById(id).innerHTML = "La cuve est remplie (ne pas pomper)";
     }
 }
+
+
 
 function getNiv2() {
     //pour appeler une API on utilise la méthode fetch()
@@ -82,6 +73,18 @@ function getNiv2() {
         });
 }
 
+//Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
+function UpdateDivNiv3(id, text) {
+    var e = document.getElementById(id).innerHTML = "Le niveau d'eau 3 est à l'état " + text;
+    //Si on ne peut pas afficher
+    if (text == "") {
+        var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
+    } else if (text == "0") {
+        var e = document.getElementById(id).innerHTML = "La cuve peut etre encore remplie";
+    } else if (text == "1") {
+        var e = document.getElementById(id).innerHTML = "La cuve est remplie (ne pas pomper)";
+    }
+}
 
 function getNiv3() {
     //pour appeler une API on utilise la méthode fetch()
@@ -109,9 +112,66 @@ function StopServer() {
             // This is where you run code if the server returns any errors
             //console.log(error);
         });
-
-
 }
+
+function getPumpStatus() {
+    //pour appeler une API on utilise la méthode fetch()
+    //pour appeler une API on utilise la méthode fetch()
+    fetch('API/Pompe.php').then((response) => response.json())
+        .then(function(data) {
+            // data est la réponse http de notre API.
+            console.log(data);
+            UpdatePumpStatus("Pompe", data);
+        })
+        .catch(function(error) {
+            // This is where you run code if the server returns any errors
+            //console.log(error);
+        });
+}
+
+//Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
+function UpdatePumpStatus(id, text) {
+    //Si on ne peut pas afficher
+    if (text == "") {
+        var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
+    } else if (text == "0") {
+        var e = document.getElementById(id).innerHTML = "La pompe est eteinte";
+    } else if (text == "1") {
+        var e = document.getElementById(id).innerHTML = "La pompe est entrain d'être utilisé";
+    }
+}
+
+function getWaterFlowStatus() {
+    //pour appeler une API on utilise la méthode fetch()
+    fetch('API/WaterFlow.php').then((response) => response.json())
+        .then(function(data) {
+            // data est la réponse http de notre API.
+            console.log(data);
+            UpdateWaterFlowStatus("WaterFlow", data);
+        })
+        .catch(function(error) {
+            // This is where you run code if the server returns any errors
+            //console.log(error);
+        });
+}
+
+//Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
+function UpdateWaterFlowStatus(id, text) {
+    //Si on ne peut pas afficher
+
+    //Si on ne peut pas afficher
+    if (text == "") {
+        var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
+    } else if (text == "0") {
+        var e = document.getElementById(id).innerHTML = "La cuve peut etre encore remplie";
+    } else if (text == "1") {
+        var e = document.getElementById(id).innerHTML = "La cuve est remplie (ne pas pomper)";
+    }
+}
+
+
+
+
 
 function addConsoValue() {
     console.log(chart.data.datasets);
@@ -124,5 +184,7 @@ setInterval("getNiv3()", refreshValuesTime);
 setInterval("getTemperature()", refreshValuesTime);
 setInterval("getNiv1()", refreshValuesTime);
 setInterval("getNiv2()", refreshValuesTime);
+setInterval("getPumpStatus()", refreshValuesTime);
+setInterval("getWaterFlowStatus()", refreshValuesTime);
 
-//setInterval("addConsoValue()", 5000);
+//setInterval("addConsoValue()", 5000)
