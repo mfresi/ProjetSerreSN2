@@ -37,13 +37,8 @@
 
 		if (temp < 2)
 		{ //On verifie la temperature pour eviter que l'eau soit gelé (temp > 1 au minimum)
-			std::cout << "La température est trop basse \n";
+			std::cout << "La temperature est trop basse \n";
 			CapteursTCP.WriteWord(3, true);
-		}
-		else if (WaterLevel1 == 0)
-		{    //On verifie si la cuve de pluie(bas) est déja remplie (0 = Vide, 1 = remplie)
-			CapteursTCP.WriteBit(6, false);
-			std::cout << "Le niveau d'eau de pluie (cuve bas) est trop bas \n";
 		}
 		else if (WaterLevel3 == 0)
 		{    //On verifie si la cuve de pluie(haut) est déja remplie ou non(0 = Vide, 1 = remplie)
@@ -80,10 +75,10 @@
 					//On laisse la pompe active tant que le niveau d'eau n'est pas suffisant
 					//On l'arrete au moment ou le Waterlvl3 arrive a 1
 					std::cout << "on laisse la pompe active \n";
-					WaterLevel3 = 1;
+					WaterLevel3 = 0;
 					CapteursTCP.WriteBit(3,true);
 				}
-			 if (WaterLevel3 == 1) {
+			 else if (WaterLevel3 == 1) {
 					std::cout << "Le niveau d'eau max a ete atteinds \n";
 					std::cout << "on eteinds la pompe \n";
 					CapteursTCP.WriteBit(5, true);
@@ -91,17 +86,20 @@
 				
 			}
 		}
-		if (temp >= 2 && WaterLevel1 == 1 && WaterLevel3 == 1)
+
+		if (temp >= 2 && WaterLevel3 == 1)
 		{    //On verifie si la cuve de pluie(haut) est déja remplie (0 = Vide, 1 = remplie)
 			CapteursTCP.WriteWord(3, false);
 			CapteursTCP.WriteBit(6, true);
 			CapteursTCP.WriteBit(5, true);
 			std::cout << "On peut utiliser l'eau de pluie \n";
 		}
-		else {
+
+		if (temp <= 1 || WaterLevel3 == 0)
+		{
+			std::cout << "On peut utilise l'eau courante \n";
 			CapteursTCP.WriteWord(3 /*La temperature */, false);
 			CapteursTCP.WriteBit(6 /*Le capteur cuve du bas */, false);
 			CapteursTCP.WriteBit(5 /*Le capteur haut cuve du haut */, false);
 		}
-
 	}
