@@ -13,12 +13,6 @@ bool TCPServeur::createSocket()
 
     if (this->sock != INVALID_SOCKET)
     {
-        // Méthode setsockopt qui permet la connexion multiClient.
-        if (setsockopt(this->sock, SOL_SOCKET, SO_REUSEADDR, (char *)&opt, sizeof(opt)) < 0)
-        {
-            perror("setsockopt");
-            exit(EXIT_FAILURE);
-        }
         return true;
     }
     else
@@ -52,7 +46,7 @@ bool TCPServeur::acceptCom()
     // Le serveur accepte la communication avec la machine source
     this->csock = accept(this->sock, (SOCKADDR *)&this->csin, &this->recsize);
 
-    if(this->csock != -1)
+    if (this->csock != -1)
     {
         notifyClientConnected(csock, csin, csin);
         return true;
@@ -60,9 +54,9 @@ bool TCPServeur::acceptCom()
     else
     {
         return false;
-    }  
+    }
 }
-bool TCPServeur::readBuffer()
+int TCPServeur::readBuffer()
 {
     char bufferClient[50] = {0};
     int resultReadBuffer;
@@ -72,37 +66,68 @@ bool TCPServeur::readBuffer()
     if (resultReadBuffer == -1)
     {
         cout << "erreur lors de la reception du message client" << endl;
-        return false;
+        return -1;
     }
     else
     {
         // Le serveur affiche le message reçu
         cout << "Chaine reçu : " << bufferClient << endl;
-        return true;
+        if (bufferClient[0] == 't' && bufferClient[1] == 'e' && bufferClient[2] == 'm' && bufferClient[3] == 'p')
+        {
+            cout << "le client demande la temperature" << endl;
+            return 4;
+        }
+        else if (bufferClient[0] == 'n' && bufferClient[1] == 'i' && bufferClient[2] == 'v' && bufferClient[3] == '1')
+        {
+            cout << "le client demande le niveau d'eau 1" << endl;
+            return 1;
+        }
+        else if (bufferClient[0] == 'n' && bufferClient[1] == 'i' && bufferClient[2] == 'v' && bufferClient[3] == '2')
+        {
+            cout << "le client demande le niveau d'eau 2" << endl;
+            return 2;
+        }
+        else if (bufferClient[0] == 'n' && bufferClient[1] == 'i' && bufferClient[2] == 'v' && bufferClient[3] == '3')
+        {
+            cout << "le client demande le niveau d'eau 3" << endl;
+            return 3;
+        }
+        else if (bufferClient[0] == 'p' && bufferClient[1] == 'o' && bufferClient[2] == 'm' && bufferClient[3] == 'p' && bufferClient[4] == 'e')
+        {
+            cout << "le client demande l'etat de la pompe" << endl;
+            return 5;
+        }
+        else if (bufferClient[0] == 'e' && bufferClient[1] == 'a' && bufferClient[2] == 'u')
+        {
+            cout << "le client demande l'etat du réseau d'eau" << endl;
+            return 6;
+        }
+        else
+        {
+            return 0;
+        }
     }
 }
-bool TCPServeur::sendBufferToClient(char * bufferSendToClient)
+bool TCPServeur::sendBufferToClient(const char *bufferSendToClient)
 {
     int resultWriteBuffer;
 
     resultWriteBuffer = send(csock, bufferSendToClient, strlen(bufferSendToClient), 0);
 
-    if(resultWriteBuffer != SOCKET_ERROR)
+    if (resultWriteBuffer != SOCKET_ERROR)
     {
         cout << "Chaine envoyée : " << bufferSendToClient << endl;
         return true;
     }
-        return false;
+    return false;
 }
-bool TCPServeur::closeSocket()
+bool TCPServeur::closeSocketClient()
 {
-    int resultCloseSock;
-    int resultCloseCsock;
+    int resultCloseCSock;
 
-    resultCloseSock = close(this->sock);
-    resultCloseCsock = close(this->csock);
+    resultCloseCSock = close(this->csock);
 
-    if (resultCloseSock == 0 && resultCloseCsock == 0)
+    if (resultCloseCSock == 0)
     {
         return true;
     }
@@ -112,14 +137,30 @@ bool TCPServeur::closeSocket()
     }
 }
 
-void TCPServeur::addListener(TCPServerEventListener* l)
+bool TCPServeur::closeListenSocket()
+{
+    int resultCloseSocket;
+
+    resultCloseSocket = close(this->sock);
+
+    if (resultCloseSocket == 0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void TCPServeur::addListener(TCPServerEventListener *l)
 {
     listeners.push_back(l);
 }
 
- void TCPServeur::notifyClientConnected(SOCKET csock, SOCKADDR_IN csinIp,SOCKADDR_IN csinPort)
+void TCPServeur::notifyClientConnected(SOCKET csock, SOCKADDR_IN csinIp, SOCKADDR_IN csinPort)
 {
-    for(int i = 0; i < listeners.size(); i++)
+    for (int i = 0; i < listeners.size(); i++)
     {
         listeners[i]->onClientConnected(csock, csinIp, csinPort);
     }

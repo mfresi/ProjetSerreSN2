@@ -7,10 +7,10 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <mysql/mysql.h>
 #include <unistd.h>
 #include <iostream>
 #include <vector>
+#include <thread>
 
 #ifndef TCPSERVER_h
 #define TCPSERVER_h
@@ -23,33 +23,34 @@ typedef int SOCKET;
 typedef struct sockaddr_in SOCKADDR_IN;
 typedef struct sockaddr SOCKADDR;
 
-class TCPServerEventListener{
-    public:
-        virtual void onClientConnected(SOCKET csock, SOCKADDR_IN csinIp, SOCKADDR_IN csinPort) = 0; 
+class TCPServerEventListener
+{
+public:
+    virtual void onClientConnected(SOCKET csock, SOCKADDR_IN csinIp, SOCKADDR_IN csinPort) = 0;
 };
 
-class TCPServeur {
+class TCPServeur
+{
 
 private:
-
     SOCKET sock;
     SOCKADDR_IN sin;
     SOCKET csock;
     SOCKADDR_IN csin;
     socklen_t recsize = sizeof(csin);
-    std::vector<TCPServerEventListener*> listeners;
+    std::vector<TCPServerEventListener *> listeners;
     void notifyClientConnected(SOCKET csock, SOCKADDR_IN csinIp, SOCKADDR_IN csinPort);
 
 public:
-
     TCPServeur();
     bool createSocket();
     bool connectServer(int port);
     bool acceptCom();
-    bool readBuffer();
-    bool sendBufferToClient(char * bufferSendToClient);
-    bool closeSocket();
-    void addListener(TCPServerEventListener*);
+    int readBuffer();
+    bool sendBufferToClient(const char *bufferSendToClient);
+    bool closeSocketClient();
+    bool closeListenSocket();
+    void addListener(TCPServerEventListener *);
 };
 
 #endif
