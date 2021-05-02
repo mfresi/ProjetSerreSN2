@@ -1,10 +1,11 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
-// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.h -o output -L/usr/include/mariadb/mysql -lmariadbclient -lpthread && ./output
+// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient -lpthread && ./output
 
 #include "class/TCPServeur.h"
 #include "class/SystemData.h"
 #include "class/BDD.h"
+#include <string>
 
 using namespace std;
 
@@ -17,24 +18,80 @@ public:
     };
 };
 
-void clientSession(TCPServeur tcpServeur, BDD Bdd)
+void getRandomValues(tempMemory *cache)
+{
+    // Temperature comprise entre 0 et 10.
+    float temperature = rand() % 30;
+    // Niveau d'eau compris entre 0 et 1.
+    int niveauEau1 = rand() % 2;
+    int niveauEau2 = rand() % 2;
+    int niveauEau3 = rand() % 2;
+    // Consommation électrique comprise entre 0 et 30.
+    int electricalConsommation = rand() % 30;
+    // Pompe : 0 -> non active || 1 -> en cours d'activité.
+    bool pompe = rand() % 2;
+    // Réseau d'eau : 0 -> eau courante || 1 -> eau de pluie.
+    bool eau = rand() % 2;
+    // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
+    cache->saveValueInCache(temperature, niveauEau1, niveauEau2, niveauEau3, electricalConsommation, pompe, eau);
+}
+
+void clientSession(TCPServeur tcpServeur, BDD Bdd, tempMemory cache)
 {
     int resultReadBuffer;
     bool resultWriteToClient;
     bool resultRequest;
     bool resultCloseBdd;
-    const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (666, 999, 444);";
+    string temperature;
+    string waterLevel1;
+    string waterLevel2;
+    string waterLevel3;
+    string pompe;
+    string eau;
+    temperature = to_string((int)cache.systemData.temperatureValue);
+    waterLevel1 = to_string(cache.systemData.waterLevelValue1);
+    waterLevel2 = to_string(cache.systemData.waterLevelValue2);
+    waterLevel3 = to_string(cache.systemData.waterLevelValue3);
+    pompe = to_string(cache.systemData.pompe);
+    eau = to_string(cache.systemData.eau);
+    const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (19, 64, 29);";
 
     resultReadBuffer = tcpServeur.readBuffer();
-    if (resultReadBuffer == true)
+    if (resultReadBuffer != -1)
     {
-        //TODO envoyer les valeurs des capteurs et actionneurs venant du cache.
-        resultWriteToClient = tcpServeur.sendBufferToClient("18");
+        if (resultReadBuffer == 4)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(temperature.c_str());
+        }
+        else if (resultReadBuffer == 1)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterLevel1.c_str());
+        }
+        else if (resultReadBuffer == 2)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterLevel2.c_str());
+        }
+        else if (resultReadBuffer == 3)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterLevel3.c_str());
+        }
+        else if (resultReadBuffer == 5)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(pompe.c_str());
+        }
+        else if (resultReadBuffer == 6)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(eau.c_str());
+        }
+        else if (resultReadBuffer == 0)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient("Ce capteur n'existe pas");
+        }
 
         if (resultWriteToClient == true)
         {
             cout << "Chaine envoyée avec succès" << endl;
-            resultRequest = Bdd.query(req);
+            /*resultRequest = Bdd.query(req);
             if (resultRequest == true)
             {
                 cout << "Insertion en BDD OK !" << endl;
@@ -42,7 +99,7 @@ void clientSession(TCPServeur tcpServeur, BDD Bdd)
             else
             {
                 cout << "Pas réussi à insérer en BDD" << endl;
-            }
+            }*/
         }
         else
         {
@@ -53,6 +110,25 @@ void clientSession(TCPServeur tcpServeur, BDD Bdd)
     {
         cout << "Pas réussi à lire la chaine" << endl;
     }
+}
+
+void updateCache(tempMemory *cache)
+{
+    srand(time(NULL));
+    do
+    {
+        cout << "Mise à jour du cache ..." << endl;
+        getRandomValues(cache);
+        cout << "Temperature : " << cache->systemData.temperatureValue << endl;
+        cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
+        cout << "niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
+        cout << "niveau d'eau 3 : " << cache->systemData.waterLevelValue3 << endl;
+        cout << "consommation electrique : " << cache->systemData.electricalConsommationValue << endl;
+        cout << "Etat de la pompe : " << cache->systemData.pompe << endl;
+        cout << "Reseau d'eau : " << cache->systemData.eau << endl;
+        // Mettre une attente de 1 minute.
+        this_thread::sleep_for(chrono::seconds(60));
+    } while (true);
 }
 
 int main()
@@ -77,18 +153,18 @@ int main()
     TCPServeur tcpServeur;
     BDD Bdd;
     myServerEventListener myEventListener;
-    srand(time(NULL));
-    //TODO Créer des valeurs aléatoires pour simuler les valeurs des capteurs et actionneurs venant du modbus.
+    tempMemory cache;
 
     tcpServeur.addListener(&myEventListener);
 
     if (!erreur)
     {
+        thread updateCacheThread(updateCache, &cache);
+        updateCacheThread.detach();
         resultInitializeBdd = Bdd.initializeBdd();
 
         if (resultInitializeBdd == true)
         {
-            cout << "Allouage de la mémoire pour Mysql OK" << endl;
             resultConnectBdd = Bdd.connectBdd(host, login, password, bdd);
 
             if (resultConnectBdd == true)
@@ -118,7 +194,7 @@ int main()
 
                     if (resultAcceptCom == true)
                     {
-                        thread clientThread(clientSession, tcpServeur, Bdd);
+                        thread clientThread(clientSession, tcpServeur, Bdd, cache);
                         clientThread.detach();
                     }
                     else
