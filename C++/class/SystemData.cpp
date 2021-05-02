@@ -1,10 +1,12 @@
 #include "SystemData.h"
 
-void tempMemory::saveValueInCache(float temperature, bool waterLevel, int electricalConso)
+void tempMemory::saveValueInCache(float temperature, bool waterLevel1, bool waterLevel2, bool waterLevel3,int electricalConso, bool pompe, bool eau)
 {
     systemData.temperatureValue = temperature;
-    systemData.waterLevelValue = waterLevel;
+    systemData.waterLevelValue1 = waterLevel1;
+    systemData.waterLevelValue2 = waterLevel2;
+    systemData.waterLevelValue3 = waterLevel3;
     systemData.electricalConsommationValue = electricalConso;
-    // Mettre une attente de 1 minute.
-    this_thread::sleep_for(chrono::seconds(1));
+    systemData.pompe = pompe;
+    systemData.eau = eau;
 }

@@ -10,10 +10,13 @@ class tempMemory
 public:
     struct systemData
     {
-        float temperatureValue = 1;
-        bool waterLevelValue = 2;
-        int electricalConsommationValue = 3;
+        float temperatureValue;
+        bool waterLevelValue1;
+        bool waterLevelValue2;
+        bool waterLevelValue3;
+        int electricalConsommationValue;
+        bool pompe;
+        bool eau;
     } systemData;
-    //TODO créer méthode pour mettre à jour le cache avec des valeurs randoms toutes les minutes.
-    void saveValueInCache(float temperature, bool waterLevel, int electricalConso);
+    void saveValueInCache(float temperature, bool waterLevel1, bool waterLevel2, bool waterLevel3,int electricalConso, bool pompe, bool eau);
 };
