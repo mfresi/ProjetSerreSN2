@@ -12,7 +12,7 @@
         {
             try
             {
-                $this->_bdd = new PDO('mysql:host=192.168.1.20;dbname=Serre', 'admin', 'admin');
+                $this->_bdd = new PDO('mysql:host=192.168.65.54;dbname=Serre', 'root', 'root');
             }
             catch(Exception $e)
             {
@@ -33,12 +33,20 @@
             ]); 
         } 
         
+        public function getDate()
+        {
+            $conso = $this->_bdd->query('SELECT `date` FROM `consommation`');
+            while($tabConso = $conso->fetch())
+            {
+                echo ($tabConso['date'] . ",");
+            }
+        }
         public function getWaterConsoPluie()
         {
             $conso = $this->_bdd->query('SELECT `eau_pluie` FROM `consommation`');
             while($tabConso = $conso->fetch())
             {
-                echo ($tabConso['eau_pluie']);
+                echo ($tabConso['eau_pluie'] . ",");
             }
         }
 
@@ -47,7 +55,7 @@
             $conso = $this->_bdd->query('SELECT `eau_courante` FROM `consommation`');
             while($tabConso = $conso->fetch())
             {
-                echo ($tabConso['eau_courante']);
+                echo ($tabConso['eau_courante'] . ",");
             }
         }
         public function getConsoElec()
@@ -55,7 +63,7 @@
             $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation`');
             while($tabConso = $conso->fetch())
             {
-                echo ($tabConso['electrique']);
+                echo ($tabConso['electrique'] . ",");
             }
         }
     }

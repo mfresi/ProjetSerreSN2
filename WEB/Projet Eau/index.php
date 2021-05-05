@@ -84,6 +84,7 @@
                     <ul class="nav navbar-nav navbar-center">
                         <li><a href="#home">Accueil</a></li>
                         <li><a href="#Graphique">Graphiques</a></li>
+                        <li><a href="page.php">Test</a></li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div>
@@ -208,16 +209,16 @@
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                    <img src="assets/1599413451355.jpg">
+                                    <img src="assets/Serre4.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                    <img src="assets/1599413451355.jpg">
+                                    <img src="assets/Serre1.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                        <img src="assets/1599413451355.jpg">
+                                        <img src="assets/Serre2.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                    <img src="assets/1599413451355.jpg">
+                                    <img src="assets/Serre3.jpg">
 
                                     </div>
 
@@ -233,6 +234,7 @@
             </div>
         </section>
         <div id="Graphique"><canvas id="myChart"></canvas></div>
+        <div id="Graphique"><canvas id="graph"></canvas></div>
 
         <!--screen short section-->
 
@@ -268,6 +270,17 @@
 
 </html>
 
+
+
+<?php 
+    $conso = new capteurs;
+
+    $conso->getWaterConsoPluie();
+    $conso->getWaterConsoCourante();
+    $conso->getConsoElec();
+    $conso->getDate();
+?>
+
 <script>
     //Déclaration des variables.
 
@@ -279,32 +292,32 @@
         // Les données
         data: 
         {
-            labels: ['Janvier', 'Fevrier', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Aout', 'Septembre', 'Octobre', 'Novembre', 'Decembre'],
+            labels: [<?php $conso->getDate(); ?>],
             datasets: 
             [{
                 label: 'Consommation eau de pluie en fonction du temps',
-                backgrounColor: 'rgb(255, 99, 132)',
-                borderColor: 'rgb(255, 99, 132)',
-                data: [1,5,7,6,19,5,5,5,11,30,40,0,17,10]
+                backgrounColor: 'rgb(198, 231, 217)',
+                borderColor: 'rgb(15, 182, 111)',
+                data: [<?php echo $conso->getWaterConsoPluie(); ?>],
             },
             {
                 label: 'Consommation eau courante en fonction du temps',
-                backgroundColor: 'rgb(100, 155, 188)',
-                borderColor: 'rgb(100, 155, 188)',
-                data: [10,15,13,1,18,7,4,0,5,20,6,14,20]
+                backgroundColor: 'transparent',
+                borderColor: 'rgb(51, 209, 255)',
+                data: [<?php echo $conso->getWaterConsoCourante(); ?>]
+            },
+            {
+                label: 'Consommation eau courante en fonction du temps',
+                backgroundColor: 'transparent',
+                borderColor: 'rgb(243, 255, 0)',
+                data: [<?php echo $conso->getConsoElec(); ?>]
             }
             ]   
         },
 
         // Configuration options go here
         options: {}
+        
     });
 </script>
 
-<?php 
-    $conso = new capteurs;
-
-    $conso->getWaterConsoPluie();
-    $conso->getWaterConsoCourante();
-    $conso->getConsoElec();
-?>
