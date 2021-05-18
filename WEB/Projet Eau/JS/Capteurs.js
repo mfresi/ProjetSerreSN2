@@ -129,6 +129,18 @@ function getPumpStatus() {
         });
 }
 
+function getRandomValue() {
+    fetch('API/randomNumber.php').then((response) => response.json())
+        .then(function(data) {
+            console.log(data);
+            UpdateInsertBddStatus("RandomValuesStatus", data);
+        })
+        .catch(function(error) {
+            // This is where you run code if the server returns any errors
+            //console.log(error);
+        });
+}
+
 //Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
 function UpdatePumpStatus(id, text) {
     //Si on ne peut pas afficher
@@ -169,7 +181,16 @@ function UpdateWaterFlowStatus(id, text) {
     }
 }
 
-
+function UpdateInsertBddStatus(id, text) {
+    if (text == true)
+    {
+        var e = document.getElementById(id).innerHTML = "Insert into consommation OK";
+    }
+    else
+    {
+        var e = document.getElementById(id).innerHTML = "Pas réussi à insert dans consommation";
+    }
+}
 
 
 
@@ -179,6 +200,7 @@ function addConsoValue() {
 }
 
 refreshValuesTime = 2000;
+refreshRandomValues = 600000;
 //On refresh les valeurs des capteurs
 setInterval("getNiv3()", refreshValuesTime);
 setInterval("getTemperature()", refreshValuesTime);
@@ -186,5 +208,7 @@ setInterval("getNiv1()", refreshValuesTime);
 setInterval("getNiv2()", refreshValuesTime);
 setInterval("getPumpStatus()", refreshValuesTime);
 setInterval("getWaterFlowStatus()", refreshValuesTime);
+// Pause de 10 minutes pour l'insert en base.
+setInterval("getRandomValue()", refreshRandomValues);
 
 //setInterval("addConsoValue()", 5000)

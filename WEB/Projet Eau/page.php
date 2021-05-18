@@ -7,31 +7,57 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <title>Archiver les données</title>
+    <script src="JS/consommation.js"></script>
 </head>
 <body>
 
 
 
     <form action ="" method="POST">
-    <input type="submit" name="truncate" value="archiver données">
+    <input type="submit" name="archiver" value="archiver données">
     </form>
-    <form>
+    <form action ="" method="POST">
     <input type="submit" name="afficher" value="afficher données">
-    </form action ="" method="POST">
+    </form>
+
+    <p id="conso"></p>
+
     <?php
-    if(isset($_POST['afficher']))
+    
+    $conso = new capteurs;
+
+    if(isset($_POST["afficher"]))
     {
-        $requete = ("SELECT * FROM `consommation`");
-        echo $requete;
+        $conso->displayArchivage();
     }
+
+
+    if(isset($_POST['archiver']))
+    {
+        $resultArchivage = $conso->archiveData();
+
+        if ($resultArchivage = true)
+        {
+            echo "Archivage des données OK";
+        }
+        else
+        {
+            echo "pas réussi à archiver les données";
+        }
+
+        $conso->purgeTable();
+    }
+   /* echo $conso;
     if(isset($_POST['truncate']))
     {
     $requete = ("SELECT * FROM `consommation`");
     $requete2 = ("INSERT INTO `test`(`id_consommation`, `eau_pluie`, `eau_courante`, `electrique`, `date`) VALUES ('?,?,?,?')");
-    $requete3 =("TRUNCATE TABLE `consommation`");
-    }
+    $requete3 = ("TRUNCATE TABLE `consommation`");
+    }*/
 ?>
+
 </body>
 </html>
 

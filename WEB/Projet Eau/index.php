@@ -1,7 +1,4 @@
-
-<?php include ("class/capteurs.php");
-?>
-
+<?php include ("class/capteurs.php"); ?>
 
 <head>
     <meta charset="utf-8">
@@ -84,7 +81,7 @@
                     <ul class="nav navbar-nav navbar-center">
                         <li><a href="#home">Accueil</a></li>
                         <li><a href="#Graphique">Graphiques</a></li>
-                        <li><a href="page.php">Test</a></li>
+                        <li><a href="page.php">Archives</a></li>
                     </ul>
                 </div><!-- /.navbar-collapse -->
             </div>
@@ -236,6 +233,8 @@
         <div id="Graphique"><canvas id="myChart"></canvas></div>
         <div id="Graphique"><canvas id="graph"></canvas></div>
 
+        <p id="RandomValuesStatus"></p>
+
         <!--screen short section-->
 
         <section id="screen_area" class="screen_area">
@@ -270,8 +269,6 @@
 
 </html>
 
-
-
 <?php 
     $conso = new capteurs;
 
@@ -283,7 +280,7 @@
 
 <script>
     //Déclaration des variables.
-
+    var date = new Date();
     var ctx = document.getElementById('myChart').getContext('2d');
     var chart = new Chart(ctx, {
         // Le type de graphique
@@ -292,11 +289,11 @@
         // Les données
         data: 
         {
-            labels: [<?php $conso->getDate(); ?>],
+            labels: [date.getFullYear()],
             datasets: 
             [{
                 label: 'Consommation eau de pluie en fonction du temps',
-                backgrounColor: 'rgb(198, 231, 217)',
+                backgrounColor: 'transparent',
                 borderColor: 'rgb(15, 182, 111)',
                 data: [<?php echo $conso->getWaterConsoPluie(); ?>],
             },
@@ -307,7 +304,7 @@
                 data: [<?php echo $conso->getWaterConsoCourante(); ?>]
             },
             {
-                label: 'Consommation eau courante en fonction du temps',
+                label: 'Consommation électique en fonction du temps',
                 backgroundColor: 'transparent',
                 borderColor: 'rgb(243, 255, 0)',
                 data: [<?php echo $conso->getConsoElec(); ?>]
