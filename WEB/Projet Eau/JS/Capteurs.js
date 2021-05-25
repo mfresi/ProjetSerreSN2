@@ -132,7 +132,7 @@ function getPumpStatus() {
 function getRandomValue() {
     fetch('API/randomNumber.php').then((response) => response.json())
         .then(function(data) {
-            console.log(data);
+            console.log("insert en base : " + data);
             UpdateInsertBddStatus("RandomValuesStatus", data);
         })
         .catch(function(error) {

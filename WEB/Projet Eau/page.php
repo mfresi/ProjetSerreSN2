@@ -1,4 +1,5 @@
 <?php include ('class/capteurs.php'); ?>
+<link rel="stylesheet" href="assets/css/Button.css">
 
 
 <!DOCTYPE html>
@@ -14,16 +15,20 @@
 <body>
 
 
-
+<div class="vertical-center">
     <form action ="" method="POST">
-    <input type="submit" name="archiver" value="archiver données">
+    <input class="button button2" type="submit" name="archiver" value="archiver données">
     </form>
     <form action ="" method="POST">
-    <input type="submit" name="afficher" value="afficher données">
+    <input class="button button2" type="submit" name="afficher" value="afficher données">
     </form>
+</div>
 
     <p id="conso"></p>
-
+    <div class="haut-droite">
+    <input class="button button2" type=button onclick=window.location.href="index.php" value="Retour page principale" />
+    </div>
+    
     <?php
     
     $conso = new capteurs;
