@@ -1,10 +1,11 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
 // command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient -lpthread && ./output
+// compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp -o output -lpthread && ./output
 
 #include "class/TCPServeur.h"
 #include "class/SystemData.h"
-#include "class/BDD.h"
+//#include "class/BDD.h"
 #include <string>
 
 using namespace std;
@@ -36,7 +37,7 @@ void getRandomValues(tempMemory *cache)
     cache->saveValueInCache(temperature, niveauEau1, niveauEau2, niveauEau3, electricalConsommation, pompe, eau);
 }
 
-void clientSession(TCPServeur tcpServeur, BDD Bdd, tempMemory cache)
+void clientSession(TCPServeur tcpServeur, tempMemory cache)
 {
     int resultReadBuffer;
     bool resultWriteToClient;
@@ -54,7 +55,7 @@ void clientSession(TCPServeur tcpServeur, BDD Bdd, tempMemory cache)
     waterLevel3 = to_string(cache.systemData.waterLevelValue3);
     pompe = to_string(cache.systemData.pompe);
     eau = to_string(cache.systemData.eau);
-    const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (19, 64, 29);";
+    const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (" + cache.systemData.temperatureValue + ", " + cache.systemData.waterLevel1 + ", " + cache.systemData.waterLevel3 + ");";
 
     resultReadBuffer = tcpServeur.readBuffer();
     if (resultReadBuffer != -1)
@@ -88,7 +89,9 @@ void clientSession(TCPServeur tcpServeur, BDD Bdd, tempMemory cache)
             resultWriteToClient = tcpServeur.sendBufferToClient("Ce capteur n'existe pas");
         }
 
-        if (resultWriteToClient == true)
+        tcpServeur.closeSocketClient();
+
+        /* if (resultWriteToClient == true)
         {
             cout << "Chaine envoyée avec succès" << endl;
             /*resultRequest = Bdd.query(req);
@@ -99,17 +102,17 @@ void clientSession(TCPServeur tcpServeur, BDD Bdd, tempMemory cache)
             else
             {
                 cout << "Pas réussi à insérer en BDD" << endl;
-            }*/
+            }
         }
         else
         {
             cout << "Pas réussi à envoyer la chaine" << endl;
-        }
+        } */
     }
     else
     {
         cout << "Pas réussi à lire la chaine" << endl;
-    }
+    } 
 }
 
 void updateCache(tempMemory *cache)
@@ -151,7 +154,7 @@ int main()
     const char *password = "37pgmh55";
     const char *bdd = "projet-serre-eau_bddeau";
     TCPServeur tcpServeur;
-    BDD Bdd;
+    //BDD Bdd;
     myServerEventListener myEventListener;
     tempMemory cache;
 
@@ -161,9 +164,9 @@ int main()
     {
         thread updateCacheThread(updateCache, &cache);
         updateCacheThread.detach();
-        resultInitializeBdd = Bdd.initializeBdd();
+        //resultInitializeBdd = Bdd.initializeBdd();
 
-        if (resultInitializeBdd == true)
+       /* if (resultInitializeBdd == true)
         {
             resultConnectBdd = Bdd.connectBdd(host, login, password, bdd);
 
@@ -179,7 +182,7 @@ int main()
         else
         {
             cout << "Pas réussi à allouer la mémoire pour Mysql" << endl;
-        }
+        } */
         resultCreateSocket = tcpServeur.createSocket();
 
         if (resultCreateSocket == true)
@@ -194,7 +197,7 @@ int main()
 
                     if (resultAcceptCom == true)
                     {
-                        thread clientThread(clientSession, tcpServeur, Bdd, cache);
+                        thread clientThread(clientSession, tcpServeur, cache);
                         clientThread.detach();
                     }
                     else
