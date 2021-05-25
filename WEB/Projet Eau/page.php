@@ -10,12 +10,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="utf-8">
     <title>Archiver les données</title>
-    <script src="JS/consommation.js"></script>
 </head>
 <body>
 
 
-<div class="vertical-center">
+<div>
     <form action ="" method="POST">
     <input class="button button2" type="submit" name="archiver" value="archiver données">
     </form>

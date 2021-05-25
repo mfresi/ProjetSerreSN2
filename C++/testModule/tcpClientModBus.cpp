@@ -27,8 +27,9 @@ int main()
     int error_message;
     int messageRecu;
     char bufferRecv[50];
+    char bufferTemp[50];
     int tempValue;
-    int trame = 0xE5;
+    float trame = 0xE5;
     string Trame;
     // Création du socket.
     SOCKET sock;
@@ -85,8 +86,13 @@ int main()
     //cout << "Temperature : " + tempValue << endl;
     if (messageRecu != 0)
     {
-        printf("%2.2hhX \n", bufferRecv[12]);  
-        cout << "Temperature : " << dec << bufferRecv[12] << endl;
+        //printf("%2.2hhX \n", bufferRecv[12]);  
+        //cout << "Temperature : " << dec << bufferRecv[12] << endl;
+        snprintf(bufferTemp, 6, "0x%2.2hhX \n", bufferRecv[12]);
+
+        float test = atof(bufferTemp);
+
+        cout << dec << test/10 << " °C" << endl;
     }
     else
     {

@@ -25,15 +25,15 @@
 
 .vertical-center {
   margin-left: 45%;
-  position: absolute;
-  top: 50%;
+  position: relative;
+  top: 10%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);
 }
 
 .haut-droite{
-  margin-left: 44%;
-  position: absolute;
+  margin-left: 10%;
+  position: relative;
   top: 5%;
   -ms-transform: translateY(-50%);
   transform: translateY(-50%);

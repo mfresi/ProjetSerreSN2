@@ -25,9 +25,10 @@ private:
 
 public:
 
-    createSocket();
-    connectSocket(char address, int port);
-    sendBuffer();
-    recvBuffer();
-    closeSocket();
-}
+    bool createSocket();
+    bool connectSocket(const char * address, int port);
+    bool sendBuffer(char octet1, char octet2, char octet3, char octet4, char octet5, char octet6, char octet7, char octet8, char octet9, char octet10, char octet11, char octet12);
+    float recvTemperature();
+    bool recvWaterLevel();
+    bool closeSocket();
+};

@@ -1,6 +1,7 @@
-function insertBDD() {
+function insertBDD() 
+{
     //pour appeler une API on utilise la méthode fetch()
-    fetch('API/consommation.php').then((response) => response.json())
+    fetch('API/randomNumber.php').then((response) => response.json())
         .then(function(data) {
             // data est la réponse http de notre API.
             console.log(data);
@@ -12,7 +13,8 @@ function insertBDD() {
         });
 }
 
-function UpdateDivConso(id, text) {
+function UpdateDivConso(id, text) 
+{
     if (text == true) {
         var e = document.getElementById(id).innerHTML = "Connexion à la base OK";
     }
@@ -22,5 +24,7 @@ function UpdateDivConso(id, text) {
     }
 }
 
-setInterval("insertBDD()", 1000);
+
+
+setInterval("insertBDD()", 10000);
 

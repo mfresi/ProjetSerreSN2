@@ -199,8 +199,8 @@ function addConsoValue() {
     this.chart.data.datasets[0].data.push(7, 8);
 }
 
-refreshValuesTime = 2000;
-refreshRandomValues = 600000;
+refreshValuesTime = 5000;
+refreshRandomValues = 5000;
 //On refresh les valeurs des capteurs
 setInterval("getNiv3()", refreshValuesTime);
 setInterval("getTemperature()", refreshValuesTime);

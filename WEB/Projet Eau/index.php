@@ -6,6 +6,8 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="favicon.ico">
+    <script src="JS/consommation.js"></script>
+
 
     <!--Google Font link-->
     <link href="https://fonts.googleapis.com/css?family=Ubuntu:300,300i,400,400i,500,500i,700,700i" rel="stylesheet">
@@ -271,18 +273,14 @@
 
 <?php 
     $conso = new capteurs;
-
-    $conso->getWaterConsoPluie();
-    $conso->getWaterConsoCourante();
-    $conso->getConsoElec();
-    $conso->getDate();
 ?>
 
 <script>
     //Déclaration des variables.
     var date = new Date();
     var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, {
+    var chart = new Chart(ctx, 
+    {
         // Le type de graphique
         type: 'line',
 

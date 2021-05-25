@@ -55,6 +55,7 @@ void updateCache(tempMemory *cache)
 }
 
 using namespace std;
+
 int main()
 {
 #if defined(WIN32)
