@@ -1,7 +1,7 @@
 function insertBDD() 
 {
     //pour appeler une API on utilise la méthode fetch()
-    fetch('API/randomNumber.php').then((response) => response.json())
+    fetch('API/Conso.php').then((response) => response.json())
         .then(function(data) 
         {
             // data est la réponse http de notre API.
@@ -25,6 +25,6 @@ function UpdateDivConso(id, text)
     }
 }
 
-setInterval("insertBDD()", 5000);
+setInterval("insertBDD()", 60000);
  //setInterval("refreshWaterConso()", 1000);
 

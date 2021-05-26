@@ -281,32 +281,31 @@
         var ctx = document.getElementById('myChart');
         var chart = new Chart(ctx, {
             // Le type de graphique
-            type: 'line',
-
+            type: 'bar',
             // Les données
             data: {
-                labels: [date.getFullYear()],
-                datasets: [{
-                        label: 'Consommation eau de pluie en fonction du temps',
-                        backgrounColor: 'transparent',
-                        borderColor: 'rgb(15, 182, 111)',
-                        data: [<?php echo $conso->getWaterConsoPluie(); ?>],
-                    },
+                labels: [<?php echo $conso->getHour(); ?>],
+                datasets: [
                     {
-                        label: 'Consommation eau courante en fonction du temps',
-                        backgroundColor: 'transparent',
+                        label: 'Consommation en eau courante en fonction du temps',
+                        backgroundColor: 'rgb(51, 209, 255)',
                         borderColor: 'rgb(51, 209, 255)',
                         data: [<?php echo $conso->getWaterConsoCourante(); ?>]
                     },
                     {
                         label: 'Consommation électique en fonction du temps',
-                        backgroundColor: 'transparent',
+                        backgroundColor: 'rgb(243, 255, 0)',
                         borderColor: 'rgb(243, 255, 0)',
                         data: [<?php echo $conso->getConsoElec(); ?>]
+                    },
+                    {
+                        label: 'Consommation en eau de pluie en fonction du temps',
+                        backgroundColor: 'rgb(51, 255, 249)',
+                        borderColor: 'rgb(51, 255, 249)',
+                        data: [<?php echo $conso->getWaterConsoPluie(); ?>]
                     }
                 ]
             },
-
             // Configuration options go here
             options: {
                 scales: {
@@ -323,28 +322,13 @@
                         }
                     }],
                     xAxes: [{
-                        time: {
-                            unit: 'year',
-                            displayFormats: {
-                                millisecond: 'h:mm:ss.SSS a',
-                                second: 'D MMM',
-                                minute: 'D MMM',
-                                hour: 'hA',
-                                day: 'MMM D',
-                                week: 'll',
-                                month: 'MMM YYYY',
-                                quarter: '[Q]Q - YYYY',
-                                year: 'YYYY'
-                            },
-                        },
                         display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Date et heure'
-                    }
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Heure'
+                        }
                     }]
                 }
-
             }
         });
     </script>

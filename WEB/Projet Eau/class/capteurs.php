@@ -16,7 +16,7 @@ class capteurs
         }
     }
 
-   /* public function envoiConso($eau_pluie, $eau_courante, $elec, $date)
+    /* public function envoiConso($eau_pluie, $eau_courante, $elec, $date)
     {
         $conso = $this->_bdd->query("INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`) VALUES (:eau_pluie, :eau_courante, :electrique , :date)");
         $conso->execute([
@@ -29,15 +29,22 @@ class capteurs
 
     public function getDate()
     {
-        $conso = $this->_bdd->query('SELECT `date` FROM `consommation`');
+        $conso = $this->_bdd->query('SELECT `date` FROM `consommation` ORDER BY `date` DESC');
         while ($tabConso = $conso->fetch()) {
             echo ($tabConso['date'] . ",");
         }
     }
-    public function getWaterConsoPluie()
-    
+    public function getHour()
     {
-        $conso = $this->_bdd->query('SELECT `eau_pluie` FROM `consommation`');
+        $conso = $this->_bdd->query('SELECT `heure` FROM `consommation` ORDER BY `heure` DESC');
+        while ($tabConso = $conso->fetch()) {
+            echo ($tabConso['heure'] . ",");
+        }
+    }
+    public function getWaterConsoPluie()
+
+    {
+        $conso = $this->_bdd->query('SELECT `eau_pluie` FROM `consommation` ORDER BY `heure` DESC');
         while ($tabConso = $conso->fetch()) {
             echo ($tabConso['eau_pluie'] . ",");
         }
@@ -45,17 +52,16 @@ class capteurs
 
     public function getWaterConsoCourante()
     {
-        $conso = $this->_bdd->query('SELECT `eau_courante` FROM `consommation`');
+        $conso = $this->_bdd->query('SELECT `eau_courante` FROM `consommation` ORDER BY `heure` DESC');
         while ($tabConso = $conso->fetch()) {
             echo ($tabConso['eau_courante'] . ",");
         }
     }
     public function getConsoElec()
     {
-        $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation`');
+        $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation` ORDER BY `heure` DESC');
         while ($tabConso = $conso->fetch()) {
             echo ($tabConso['electrique'] . ",");
-
         }
     }
 
@@ -95,19 +101,16 @@ class capteurs
 
                 public function insertBDDConso($eau_pluie, $eau_courante, $electrique, $date)
                 {
-                    $conso = $this->_bdd->query('INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`) VALUES ("' . $eau_pluie . '", "' . $eau_courante . '", "' . $electrique . '", "' . $date . '")');
+                    $conso = $this->_bdd->query('INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `heure`) VALUES ("' . $eau_pluie . '", "' . $eau_courante . '", "' . $electrique . '", "' . $date . '")');
 
-                    if ($conso == true) 
-                    {
+                    if ($conso == true) {
                         return true;
-                    } 
-                    else 
-                    {
+                    } else {
                         return false;
                     }
                 }
-
             }
+
                         ?>
 
 

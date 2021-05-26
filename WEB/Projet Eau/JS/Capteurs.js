@@ -21,9 +21,9 @@ function UpdateDivTemp(id, text) {
     }
 }
 
-/*function getwaterConso()
+function getWaterConso()
 {
-    fetch('API/aa.php').then((response) => response.json())
+    fetch('API/Conso.php').then((response) => response.json())
         .then(function(data)
         {
             console.log(data);
@@ -43,7 +43,7 @@ function UpdateWaterConso(id, text)
         var e = document.getElementById(id).innerHTML = "";
     }
 
-} */
+}
 
 function getNiv1() {
     //pour appeler une API on utilise la méthode fetch()
@@ -156,17 +156,6 @@ function getPumpStatus() {
         });
 }
 
-function getRandomValue() {
-    fetch('API/randomNumber.php').then((response) => response.json())
-        .then(function(data) {
-            console.log("insert en base : " + data);
-            UpdateInsertBddStatus("RandomValuesStatus", data);
-        })
-        .catch(function(error) {
-            // This is where you run code if the server returns any errors
-            //console.log(error);
-        });
-}
 
 //Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
 function UpdatePumpStatus(id, text) {
@@ -228,7 +217,6 @@ function addConsoValue() {
 
 refreshValuesTime = 2000;
 refreshRandomValues = 2000;
-refreshValuesConsoTime = 10000;
 //On refresh les valeurs des capteurs
 setInterval("getNiv3()", refreshValuesTime);
 setInterval("getTemperature()", refreshValuesTime);
@@ -237,7 +225,5 @@ setInterval("getNiv2()", refreshValuesTime);
 setInterval("getPumpStatus()", refreshValuesTime);
 setInterval("getWaterFlowStatus()", refreshValuesTime);
 // Pause de 10 minutes pour l'insert en base.
-setInterval("getRandomValue()", refreshRandomValues);
-setInterval("getWaterConso()", refreshValuesConsoTime);
 
 //setInterval("addConsoValue()", 5000)
