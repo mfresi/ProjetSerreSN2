@@ -2,9 +2,14 @@
 
 int main()
 {
+    float temperature;
+    int niveauEau;
     Capteurs capteurs("192.168.65.120",502);
 
-    capteurs.getTemperature();
+    temperature = capteurs.getTemperature();
 
-    capteurs.getNiveauEau();
+    niveauEau = capteurs.getNiveauEau();
+
+    cout << "Temperature : " << temperature << " °C" << endl;
+    cout << "Etat niveau d'eau : " << niveauEau << endl;
 }

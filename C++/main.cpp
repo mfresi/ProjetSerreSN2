@@ -1,10 +1,11 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
 // command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient -lpthread && ./output
-// compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp -o output -lpthread && ./output
+// compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output -lpthread && ./output
 
 #include "class/TCPServeur.h"
 #include "class/SystemData.h"
+#include "class/Capteurs.h"
 //#include "class/BDD.h"
 #include <string>
 
@@ -19,22 +20,41 @@ public:
     };
 };
 
-void getRandomValues(tempMemory *cache)
+void getRandomValues(tempMemory *cache, Capteurs capteurs)
 {
-    // Temperature comprise entre 0 et 10.
-    float temperature = rand() % 30;
-    // Niveau d'eau compris entre 0 et 1.
-    int niveauEau1 = rand() % 2;
-    int niveauEau2 = rand() % 2;
-    int niveauEau3 = rand() % 2;
-    // Consommation électrique comprise entre 0 et 30.
+    float temperature = capteurs.getTemperature();
+    int etatWaterLevel = capteurs.getNiveauEau();
+    bool waterLevel1;
+    bool waterLevel2;
+    // On met le niveau 3 à 0 car nous n'avons pas encore le 3ème capteur.
+    bool waterLevel3 = 0;
+    if (etatWaterLevel == 0)
+    {
+        waterLevel1 = 0;
+        waterLevel2 = 0;
+    }
+    else if (etatWaterLevel == 1)
+    {
+        waterLevel1 = 1;
+        waterLevel2 = 0;
+    }
+    else if (etatWaterLevel == 2)
+    {
+        waterLevel1 = 0;
+        waterLevel2 = 1;
+    }
+    else if (etatWaterLevel == 3)
+    {
+        waterLevel1 = 1;
+        waterLevel2 = 1;
+    }
     int electricalConsommation = rand() % 30;
     // Pompe : 0 -> non active || 1 -> en cours d'activité.
     bool pompe = rand() % 2;
     // Réseau d'eau : 0 -> eau courante || 1 -> eau de pluie.
     bool eau = rand() % 2;
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
-    cache->saveValueInCache(temperature, niveauEau1, niveauEau2, niveauEau3, electricalConsommation, pompe, eau);
+    cache->saveValueInCache(temperature, waterLevel1,  waterLevel2, waterLevel3, electricalConsommation, pompe, eau);
 }
 
 void clientSession(TCPServeur tcpServeur, tempMemory cache)
@@ -49,13 +69,13 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     string waterLevel3;
     string pompe;
     string eau;
-    temperature = to_string((int)cache.systemData.temperatureValue);
+    temperature = to_string((float)cache.systemData.temperatureValue);
     waterLevel1 = to_string(cache.systemData.waterLevelValue1);
     waterLevel2 = to_string(cache.systemData.waterLevelValue2);
     waterLevel3 = to_string(cache.systemData.waterLevelValue3);
     pompe = to_string(cache.systemData.pompe);
     eau = to_string(cache.systemData.eau);
-    const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (" + cache.systemData.temperatureValue + ", " + cache.systemData.waterLevel1 + ", " + cache.systemData.waterLevel3 + ");";
+    //const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (" + cache.systemData.temperatureValue + ", " + cache.systemData.waterLevel1 + ", " + cache.systemData.waterLevel3 + ");";
 
     resultReadBuffer = tcpServeur.readBuffer();
     if (resultReadBuffer != -1)
@@ -115,13 +135,13 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     } 
 }
 
-void updateCache(tempMemory *cache)
+void updateCache(tempMemory *cache, Capteurs capteurs)
 {
     srand(time(NULL));
     do
     {
         cout << "Mise à jour du cache ..." << endl;
-        getRandomValues(cache);
+        getRandomValues(cache, capteurs);
         cout << "Temperature : " << cache->systemData.temperatureValue << endl;
         cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
         cout << "niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
@@ -157,12 +177,13 @@ int main()
     //BDD Bdd;
     myServerEventListener myEventListener;
     tempMemory cache;
+    Capteurs capteurs("192.168.65.120", 502);
 
     tcpServeur.addListener(&myEventListener);
 
     if (!erreur)
     {
-        thread updateCacheThread(updateCache, &cache);
+        thread updateCacheThread(updateCache, &cache, capteurs);
         updateCacheThread.detach();
         //resultInitializeBdd = Bdd.initializeBdd();
 

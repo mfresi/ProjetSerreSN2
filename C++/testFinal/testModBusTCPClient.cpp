@@ -45,15 +45,25 @@ int main()
             {
                 int waterLevel = modbus.recvWaterLevel();
 
-                if (waterLevel == 0)
+                if (waterLevel == -1)
                 {
-                    cout << "Etat niveau d'eau : 0" << endl;
-                    return 0;
+                    cout << "Pas réussi à lire la valeur du capteur" << endl;
                 }
-                else
+                else if (waterLevel == 0)
                 {
-                    cout << "Etat niveau d'eau : " << waterLevel << endl;
-                    return 1;
+                    //Les deux capteurs à 0
+                }
+                else if (waterLevel == 1)
+                {
+                    //Le capeur métal est 0 et plastique 1
+                }
+                else if (waterLevel == 2)
+                {
+                    //Le capteur metal est 1 et plastique 0
+                }
+                else if (waterLevel == 3)
+                {
+                    //Les deux capteurs à 1
                 }
             }
             else

@@ -1,4 +1,4 @@
-<?php include ("class/capteurs.php"); ?>
+<?php include("class/capteurs.php"); ?>
 
 <head>
     <meta charset="utf-8">
@@ -6,7 +6,6 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="icon" type="image/png" href="favicon.ico">
-    <script src="JS/consommation.js"></script>
 
 
     <!--Google Font link-->
@@ -173,27 +172,27 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                            <div class="features_item sm-m-top-30">
-                                <div class="f_item_icon">
-                                    <img src="assets/pompe.png">
-                                </div>
-                                <div class="f_item_text">
-                                    <h3>Pompe</h3>
-                                    <p id="Pompe"> </p>
-                                </div>
+                        <div class="features_item sm-m-top-30">
+                            <div class="f_item_icon">
+                                <img src="assets/pompe.png">
+                            </div>
+                            <div class="f_item_text">
+                                <h3>Pompe</h3>
+                                <p id="Pompe"> </p>
                             </div>
                         </div>
-                        <div class="col-md-4">
-                            <div class="features_item sm-m-top-30">
-                                <div class="f_item_icon">
-                                    <img src="assets/robinet.png">
-                                </div>
-                                <div class="f_item_text">
-                                    <h3>Réseau Eau</h3>
-                                    <p id="WaterFlow"> </p>
-                                </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="features_item sm-m-top-30">
+                            <div class="f_item_icon">
+                                <img src="assets/robinet.png">
+                            </div>
+                            <div class="f_item_text">
+                                <h3>Réseau Eau</h3>
+                                <p id="WaterFlow"> </p>
                             </div>
                         </div>
+                    </div>
                 </div><!-- End off row -->
             </div><!-- End off container -->
         </section><!-- End off Featured Section-->
@@ -208,16 +207,16 @@
                             <div class="swiper-container">
                                 <div class="swiper-wrapper">
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                    <img src="assets/Serre4.jpg">
+                                        <img src="assets/Serre4.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                    <img src="assets/Serre1.jpg">
+                                        <img src="assets/Serre1.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
                                         <img src="assets/Serre2.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                    <img src="assets/Serre3.jpg">
+                                        <img src="assets/Serre3.jpg">
 
                                     </div>
 
@@ -225,7 +224,7 @@
                                 <!-- If we need navigation buttons -->
                                 <div class="swiper-button-prev"></div>
                                 <div class="swiper-button-next"></div>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -257,62 +256,95 @@
                             <script src="assets/js/swiper.min.js"></script>
                             <script src="assets/js/jquery.collapse.js"></script>
                             <script src="assets/js/bootsnav.js"></script>
+                            <script src="JS/consommation.js"></script>
                             <script src="JS/Capteurs.js"></script>
                             <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
                             <script src="assets/js/plugins.js"></script>
                             <script src="assets/js/main.js"></script>
 
-                        </div>  
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
     </div>
 
-</html>
+    </html>
 
-<?php 
+    <?php
     $conso = new capteurs;
-?>
+    ?>
 
-<script>
-    //Déclaration des variables.
-    var date = new Date();
-    var ctx = document.getElementById('myChart').getContext('2d');
-    var chart = new Chart(ctx, 
-    {
-        // Le type de graphique
-        type: 'line',
+    <script>
+        //Déclaration des variables.
+        var date = new Date();
+        var ctx = document.getElementById('myChart');
+        var chart = new Chart(ctx, {
+            // Le type de graphique
+            type: 'line',
 
-        // Les données
-        data: 
-        {
-            labels: [date.getFullYear()],
-            datasets: 
-            [{
-                label: 'Consommation eau de pluie en fonction du temps',
-                backgrounColor: 'transparent',
-                borderColor: 'rgb(15, 182, 111)',
-                data: [<?php echo $conso->getWaterConsoPluie(); ?>],
+            // Les données
+            data: {
+                labels: [date.getFullYear()],
+                datasets: [{
+                        label: 'Consommation eau de pluie en fonction du temps',
+                        backgrounColor: 'transparent',
+                        borderColor: 'rgb(15, 182, 111)',
+                        data: [<?php echo $conso->getWaterConsoPluie(); ?>],
+                    },
+                    {
+                        label: 'Consommation eau courante en fonction du temps',
+                        backgroundColor: 'transparent',
+                        borderColor: 'rgb(51, 209, 255)',
+                        data: [<?php echo $conso->getWaterConsoCourante(); ?>]
+                    },
+                    {
+                        label: 'Consommation électique en fonction du temps',
+                        backgroundColor: 'transparent',
+                        borderColor: 'rgb(243, 255, 0)',
+                        data: [<?php echo $conso->getConsoElec(); ?>]
+                    }
+                ]
             },
-            {
-                label: 'Consommation eau courante en fonction du temps',
-                backgroundColor: 'transparent',
-                borderColor: 'rgb(51, 209, 255)',
-                data: [<?php echo $conso->getWaterConsoCourante(); ?>]
-            },
-            {
-                label: 'Consommation électique en fonction du temps',
-                backgroundColor: 'transparent',
-                borderColor: 'rgb(243, 255, 0)',
-                data: [<?php echo $conso->getConsoElec(); ?>]
+
+            // Configuration options go here
+            options: {
+                scales: {
+                    xAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Litres'
+                        }
+                    }],
+                    xAxes: [{
+                        time: {
+                            unit: 'year',
+                            displayFormats: {
+                                millisecond: 'h:mm:ss.SSS a',
+                                second: 'D MMM',
+                                minute: 'D MMM',
+                                hour: 'hA',
+                                day: 'MMM D',
+                                week: 'll',
+                                month: 'MMM YYYY',
+                                quarter: '[Q]Q - YYYY',
+                                year: 'YYYY'
+                            },
+                        },
+                        display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Date et heure'
+                    }
+                    }]
+                }
+
             }
-            ]   
-        },
-
-        // Configuration options go here
-        options: {}
-        
-    });
-</script>
-
+        });
+    </script>

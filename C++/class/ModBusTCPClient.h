@@ -1,3 +1,6 @@
+// Déclaration de la classe ModBusTCPClient.
+// Permet de communiquer avec la carte E/S par protocole modbus pour récupérer les valeurs des capteurs et piloter les actionneurs avec les classes Capteurs et Actionneurs.
+// Dev by Frezale.
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -29,6 +32,6 @@ public:
     bool connectSocket(const char * address, int port);
     bool sendBuffer(char octet1, char octet2, char octet3, char octet4, char octet5, char octet6, char octet7, char octet8, char octet9, char octet10, char octet11, char octet12);
     float recvTemperature();
-    bool recvWaterLevel();
+    int recvWaterLevel();
     bool closeSocket();
 };

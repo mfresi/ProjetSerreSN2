@@ -16,7 +16,7 @@ class capteurs
         }
     }
 
-    public function envoiConso($eau_pluie, $eau_courante, $elec, $date)
+   /* public function envoiConso($eau_pluie, $eau_courante, $elec, $date)
     {
         $conso = $this->_bdd->query("INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`) VALUES (:eau_pluie, :eau_courante, :electrique , :date)");
         $conso->execute([
@@ -25,7 +25,7 @@ class capteurs
             'electrique' => $elec,
             'date' => $date
         ]);
-    }
+    } */
 
     public function getDate()
     {
@@ -35,6 +35,7 @@ class capteurs
         }
     }
     public function getWaterConsoPluie()
+    
     {
         $conso = $this->_bdd->query('SELECT `eau_pluie` FROM `consommation`');
         while ($tabConso = $conso->fetch()) {
@@ -54,12 +55,13 @@ class capteurs
         $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation`');
         while ($tabConso = $conso->fetch()) {
             echo ($tabConso['electrique'] . ",");
+
         }
     }
 
     public function archiveData()
     {
-        $conso = $this->_bdd->query("INSERT INTO test (eau_pluie, eau_courante, electrique, date) SELECT eau_pluie, eau_courante, electrique, date FROM consommation");
+        $conso = $this->_bdd->query("INSERT INTO archives (eau_pluie, eau_courante, electrique, date) SELECT eau_pluie, eau_courante, electrique, date FROM consommation");
 
         if ($conso != false) {
             return true;

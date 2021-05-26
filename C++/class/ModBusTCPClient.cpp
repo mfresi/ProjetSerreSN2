@@ -1,5 +1,8 @@
+// Implémentation des méthodes de la classe ModBusTCPClient.
+// Dev by Frezale.
 #include "ModBusTCPClient.h"
-
+// Méthode createSocket de type bool qui permet de créer un socket.
+// Return true en cas de succès et false en cas d'échec.
 bool ModBusTCPClient::createSocket()
 {
     this->sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -13,6 +16,8 @@ bool ModBusTCPClient::createSocket()
         return false;
     }
 }
+// Méthode connectSocket de type bool qui prend en paramètre une adresse de type const char * et un port de type int.
+// Return true en cas de succès et false en cas d'échec.
 bool ModBusTCPClient::connectSocket(const char * address, int port)
 {
     // Mettre 192.168.65.120 pour l'adresse et 502 pour le port.
@@ -31,6 +36,8 @@ bool ModBusTCPClient::connectSocket(const char * address, int port)
         return false;
     }
 }
+// Méthode sendBuffer de type bool qui prend en paramètre les 12 octets de la trame d'envoie.
+// Return true en cas de succès et false en cas d'échec.
 bool ModBusTCPClient::sendBuffer(char octet1, char octet2, char octet3, char octet4, char octet5, char octet6, char octet7, char octet8, char octet9, char octet10, char octet11, char octet12)
 {
     char buffer[12];
@@ -61,23 +68,36 @@ bool ModBusTCPClient::sendBuffer(char octet1, char octet2, char octet3, char oct
 float ModBusTCPClient::recvTemperature()
 {
     char bufferRecv[50];
-    char bufferTemp[50];
+    char bufferTempOctet11[50];
+    char bufferTempOctet12[50];
+    char bufferT[50];
 
     int messageRecu = recv(sock, &bufferRecv, 13, 0);
 
     if (messageRecu != 0)
     {
-        snprintf(bufferTemp, 6, "0x%2.2hhX \n", bufferRecv[12]);
-        float temp = atof(bufferTemp);
-        return temp / 10;
+        snprintf(bufferTempOctet11, 6, "0x%2.2hhX \n", bufferRecv[11]);
+        snprintf(bufferTempOctet12, 6, "0x%2.2hhX \n", bufferRecv[12]);
+        snprintf(bufferT, 10, "0x%2.2hhX 0x%2.2hhX \n", bufferRecv[11], bufferRecv[12]);
+        float temp2 = atof(bufferTempOctet11);
+        float temp = atof(bufferTempOctet12);
+        float tempT = atof(bufferT);
+        
+        if (temp <= 255 && temp2 == 0)
+        {
+            return temp / 10;
+        }
+        else
+        {
+            return (temp2 * (16*16) + temp) / 10;
+        }
     }
     else
     {
-        cout << "Pas réussi à lire zeubi" << endl;
         return false;
     }
 }
-bool ModBusTCPClient::recvWaterLevel()
+int ModBusTCPClient::recvWaterLevel()
 {
     char bufferRecv[50];
     char bufferTemp[50];
@@ -92,8 +112,7 @@ bool ModBusTCPClient::recvWaterLevel()
     }
     else
     {
-        cout << "Pas réussi à lire zeubi" << endl;
-        return false;
+        return -1;
     }
 }
 bool ModBusTCPClient::closeSocket()

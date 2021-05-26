@@ -12,17 +12,13 @@
 
 using namespace std;
 
-class Capteurs
-{
-    private :  
-    SOCKET sock;
+class Actionneurs {
 
-    public :
-    
-    Capteurs(const char * addr, int port);
-    ~Capteurs();
-    float getTemperature();
-    int getNiveauEau();
-    float getWaterconsommation();
+private : 
+	int addr;
 
-};
+public :
+	Actionneurs();
+	int SetValue(bool value);
+
+}

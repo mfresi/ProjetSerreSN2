@@ -20,25 +20,24 @@ float Capteurs::getTemperature()
 
     if (resultgetTemperature == true)
     {
-        cout << "trame pour temperature OK" << endl;
         float temperature = Client.recvTemperature();
 
         if (temperature)
         {
-            cout << "Temperature exterieure : " << temperature << " °C" << endl;
+            return temperature;
         }
         else
         {
-            cout << "Pas réussi à envoyer trame pour temperature" << endl;
+            return 0;
         }
     }
     else
     {
-        cout << "Pas réussi à envoyer la trame" << endl;
+        return false;
     }
 }
 
-bool Capteurs::getNiveauEau()
+int Capteurs::getNiveauEau()
 {
     int resultgetWaterLevel = Client.sendBuffer(0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01, 0x02, 0x00, 0x63, 0x00, 0x02);
 
@@ -48,19 +47,24 @@ bool Capteurs::getNiveauEau()
 
         if (waterLevel == 0)
         {
-            cout << "Etat niveau d'eau : 0" << endl;
-            
+            return 0; 
         }
-        else
+        else if (waterLevel == 1)
         {
-            cout << "Etat niveau d'eau : " << waterLevel << endl;
-          
+            return 1;
+        }
+        else if (waterLevel == 2)
+        {
+            return 2;
+        }
+        else if (waterLevel == 3)
+        {
+            return 3;
         }
     }
 }
 
 float Capteurs::getWaterconsommation()
 {
-
     return 0;
 }

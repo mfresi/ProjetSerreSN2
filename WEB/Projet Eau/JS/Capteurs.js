@@ -21,6 +21,30 @@ function UpdateDivTemp(id, text) {
     }
 }
 
+function getwaterConso()
+{
+    fetch('API/aa.php').then((response) => response.json())
+        .then(function(data)
+        {
+            console.log(data);
+            UpdateWaterConso("WaterConso", data);
+        })
+        .catch(function(error)
+        {
+
+        });
+}
+
+function UpdateWaterConso(id, text)
+{
+    var e = document.getElementById(id).innerHTML = "";
+    if (text == "")
+    {
+        var e = document.getElementById(id).innerHTML = "";
+    }
+
+}
+
 function getNiv1() {
     //pour appeler une API on utilise la méthode fetch()
     fetch('API/niveau1.php').then((response) => response.json())
@@ -199,8 +223,9 @@ function addConsoValue() {
     this.chart.data.datasets[0].data.push(7, 8);
 }
 
-refreshValuesTime = 5000;
-refreshRandomValues = 5000;
+refreshValuesTime = 30000;
+refreshRandomValues = 30000;
+refreshValuesConsoTime = 10000;
 //On refresh les valeurs des capteurs
 setInterval("getNiv3()", refreshValuesTime);
 setInterval("getTemperature()", refreshValuesTime);
@@ -210,5 +235,6 @@ setInterval("getPumpStatus()", refreshValuesTime);
 setInterval("getWaterFlowStatus()", refreshValuesTime);
 // Pause de 10 minutes pour l'insert en base.
 setInterval("getRandomValue()", refreshRandomValues);
+setInterval("getWaterConso()", refreshValuesConsoTime);
 
 //setInterval("addConsoValue()", 5000)
