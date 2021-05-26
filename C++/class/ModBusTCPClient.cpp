@@ -115,6 +115,25 @@ int ModBusTCPClient::recvWaterLevel()
         return -1;
     }
 }
+float ModBusTCPClient::recvWaterConso(){
+
+char bufferRecv[50];
+char bufferTemp[50];
+
+    int messageRecu = recv(sock, &bufferRecv, 11, 0);
+
+    if (messageRecu != 0)
+    {
+        snprintf(bufferTemp, 6, "0x%2.2hhX \n", bufferRecv[10]);
+        int PulseNumber = atof(bufferTemp);
+        return PulseNumber/10;
+    }
+    else
+    {
+        return 0;
+    }
+
+}
 bool ModBusTCPClient::closeSocket()
 {
     int resultCloseSocket;
@@ -130,3 +149,5 @@ bool ModBusTCPClient::closeSocket()
         return false;
     }
 }
+
+

@@ -24,9 +24,9 @@ void getRandomValues(tempMemory *cache, Capteurs capteurs)
 {
     float temperature = capteurs.getTemperature();
     int etatWaterLevel = capteurs.getNiveauEau();
+    float waterConso = capteurs.getWaterconsommation();
     bool waterLevel1;
     bool waterLevel2;
-    // On met le niveau 3 à 0 car nous n'avons pas encore le 3ème capteur.
     bool waterLevel3 = 0;
     if (etatWaterLevel == 0)
     {
@@ -48,13 +48,13 @@ void getRandomValues(tempMemory *cache, Capteurs capteurs)
         waterLevel1 = 1;
         waterLevel2 = 1;
     }
-    int electricalConsommation = rand() % 30;
+    int ElectricalConso = rand() % 30;
     // Pompe : 0 -> non active || 1 -> en cours d'activité.
     bool pompe = rand() % 2;
     // Réseau d'eau : 0 -> eau courante || 1 -> eau de pluie.
     bool eau = rand() % 2;
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
-    cache->saveValueInCache(temperature, waterLevel1,  waterLevel2, waterLevel3, electricalConsommation, pompe, eau);
+    cache->saveValueInCache(temperature, waterLevel1,  waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
 }
 
 void clientSession(TCPServeur tcpServeur, tempMemory cache)
@@ -69,10 +69,14 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     string waterLevel3;
     string pompe;
     string eau;
+    string waterConso;
+    string electricalConso;
     temperature = to_string((float)cache.systemData.temperatureValue);
     waterLevel1 = to_string(cache.systemData.waterLevelValue1);
     waterLevel2 = to_string(cache.systemData.waterLevelValue2);
     waterLevel3 = to_string(cache.systemData.waterLevelValue3);
+    waterConso = to_string(cache.systemData.waterConsommationValue);
+    electricalConso = to_string(cache.systemData.electricalConsommationValue);
     pompe = to_string(cache.systemData.pompe);
     eau = to_string(cache.systemData.eau);
     //const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (" + cache.systemData.temperatureValue + ", " + cache.systemData.waterLevel1 + ", " + cache.systemData.waterLevel3 + ");";
@@ -103,6 +107,14 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
         else if (resultReadBuffer == 6)
         {
             resultWriteToClient = tcpServeur.sendBufferToClient(eau.c_str());
+        }
+        else if (resultReadBuffer == 7)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterConso.c_str());
+        }
+        else if (resultReadBuffer == 8)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(electricalConso.c_str());
         }
         else if (resultReadBuffer == 0)
         {
@@ -146,6 +158,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs)
         cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
         cout << "niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
         cout << "niveau d'eau 3 : " << cache->systemData.waterLevelValue3 << endl;
+        cout << "consommation eau : " << cache->systemData.waterConsommationValue << endl;
         cout << "consommation electrique : " << cache->systemData.electricalConsommationValue << endl;
         cout << "Etat de la pompe : " << cache->systemData.pompe << endl;
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;

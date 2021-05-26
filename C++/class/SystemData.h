@@ -14,9 +14,10 @@ public:
         bool waterLevelValue1;
         bool waterLevelValue2;
         bool waterLevelValue3;
+        float waterConsommationValue;
         int electricalConsommationValue;
         bool pompe;
         bool eau;
     } systemData;
-    void saveValueInCache(float temperature, bool waterLevel1, bool waterLevel2, bool waterLevel3,int electricalConso, bool pompe, bool eau);
+    void saveValueInCache(float temperature, bool waterLevel1, bool waterLevel2, bool waterLevel3, float waterConsommation, int electricalConsommation, bool pompe, bool eau);
 };

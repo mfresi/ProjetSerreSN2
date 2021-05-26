@@ -66,5 +66,25 @@ int Capteurs::getNiveauEau()
 
 float Capteurs::getWaterconsommation()
 {
-    return 0;
+
+     int resultgetTemperature = Client.sendBuffer(0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01, 0x04, 0x00, 0xCD, 0x00, 0x01);
+
+    if (resultgetTemperature == true)
+    {
+        float WaterConso = Client.recvWaterConso();
+
+        if (WaterConso)
+        {
+            return WaterConso;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+    else
+    {
+        return false;
+    }
+
 }

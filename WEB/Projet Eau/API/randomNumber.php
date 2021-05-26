@@ -13,17 +13,3 @@
     echo json_encode($result);
 ?>
 
-<?php
-    function getConsoElec()
-    {
-        $consoObject = new capteurs;
-        $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation`');
-        while ($tabConso = $conso->fetch()) {
-            echo ($tabConso['electrique'] . ",");
-
-            $result = $consoObject->getWaterConsoPluie();
-            echo json_encode($result);
-        }
-    }
-?>
-
