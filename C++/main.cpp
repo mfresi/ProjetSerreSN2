@@ -1,12 +1,13 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
-// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) -lpthread && ./output
+// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp class/Actionneurs.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) -lpthread && ./output
 // compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output -lpthread && ./output
 
 #include "class/TCPServeur.h"
 #include "class/SystemData.h"
 #include "class/Capteurs.h"
 #include "class/BDD.h"
+#include "class/Actionneurs.h"
 #include <string>
 #include <mutex>
 
@@ -23,13 +24,16 @@ public:
 
 std::mutex synchro;
 
-void getRandomValues(tempMemory *cache, Capteurs capteurs)
+void getRandomValues(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
 {
     float temperature = capteurs.getTemperature();
     int etatWaterLevel = capteurs.getNiveauEau();
     float waterConso = capteurs.getWaterconsommation();
     bool waterLevel1;
     bool waterLevel2;
+    bool pompe;
+    bool eau;
+    int ElectricalConso = rand() % 30;
     bool waterLevel3 = 0;
     if (etatWaterLevel == 0)
     {
@@ -51,11 +55,58 @@ void getRandomValues(tempMemory *cache, Capteurs capteurs)
         waterLevel1 = 1;
         waterLevel2 = 1;
     }
-    int ElectricalConso = rand() % 30;
-    // Pompe : 0 -> non active || 1 -> en cours d'activité.
-    bool pompe = rand() % 2;
-    // Réseau d'eau : 0 -> eau courante || 1 -> eau de pluie.
-    bool eau = rand() % 2;
+    if (temperature < 2)
+    { //On verifie la temperature pour eviter que l'eau soit gelé (temp > 1 au minimum)
+        cout << "La temperature est trop basse \n";
+    }
+    else if (waterLevel2 == 0)
+    { //On verifie si la cuve de pluie(haut) est déja remplie ou non(0 = Vide, 1 = remplie)
+
+        cout << "Pas assez d'eau dans la cuve de pluie (haut) \n";
+        cout << "On verifie la pompe \n";
+
+        if (temperature < 2)
+        { //On verifie la temperature pour eviter que l'eau soit gelé (temp > 1 au minimum)
+            cout << "La temperature est trop basse pour utiliser la pompe donc on utilise l'eau courante \n";
+        }
+        else if (waterLevel1 == 0)
+        { //On verifie si la cuve de pluie(bas) est remplie (0 = Vide, 1 = remplie)
+            cout << "Impossible d'utiliser la pompe car niveau de pluie trop bas (cuve bas) \n";
+        }
+
+        else if (temperature >= 2 && waterLevel1 == 1 && waterLevel2 == 0)
+        {
+
+            cout << " On peut activer la pompe \n";
+
+            if (waterLevel2 == 0)
+            {
+                //On laisse la pompe active tant que le niveau d'eau n'est pas suffisant
+                //On l'arrete au moment ou le Waterlvl3 arrive a 1
+                cout << "on laisse la pompe active \n";
+                pompe = 1;
+            }
+            else if (waterLevel2 == 1)
+            {
+                cout << "Le niveau d'eau max a ete atteinds \n";
+                cout << "on eteinds la pompe \n";
+                pompe = 0;
+            }
+        }
+    }
+    if (temperature >= 2 && waterLevel2 == 1)
+    { //On verifie si la cuve de pluie(haut) est déja remplie (0 = Vide, 1 = remplie)
+        cout << "Le système est sur le réseau eau de pluie \n";
+        actionneurs.SetValueElectrovanne1OFF();
+        eau = 0;
+    }
+
+    if (temperature <= 1 || waterLevel2 == 0)
+    {
+       cout << "Le système est sur le réseau eau courante \n";
+        actionneurs.SetValueElectrovanne1ON();
+        eau = 1;
+    }
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
     cache->saveValueInCache(temperature, waterLevel1,  waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
 }
@@ -144,14 +195,14 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     } 
 }
 
-void updateCache(tempMemory *cache, Capteurs capteurs)
+void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
 {
     srand(time(NULL));
     do
     {
         cout << "Mise à jour du cache ..." << endl;
         synchro.lock();
-        getRandomValues(cache, capteurs);
+        getRandomValues(cache, capteurs, actionneurs);
         cout << "Temperature : " << cache->systemData.temperatureValue << endl;
         cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
         cout << "niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
@@ -190,12 +241,13 @@ int main()
     myServerEventListener myEventListener;
     tempMemory cache;
     Capteurs capteurs("192.168.65.120", 502);
+    Actionneurs actionneurs("192.168.65.120", 502);
 
     tcpServeur.addListener(&myEventListener);
 
     if (!erreur)
     {
-        thread updateCacheThread(updateCache, &cache, capteurs);
+        thread updateCacheThread(updateCache, &cache, capteurs, actionneurs);
         updateCacheThread.detach();
         resultInitializeBdd = Bdd.initializeBdd();
 

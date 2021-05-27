@@ -133,19 +133,7 @@ function UpdatePumpStatus(id, text) {
         var e = document.getElementById(id).innerHTML = "La pompe est entrain d'être utilisé";
     }
 }
-function getWaterFlowStatus() {
-    //pour appeler une API on utilise la méthode fetch()
-    fetch('API/WaterFlow.php').then((response) => response.json())
-        .then(function(data) {
-            // data est la réponse http de notre API.
-            console.log(data);
-            UpdateWaterFlowStatus("WaterFlow", data);
-        })
-        .catch(function(error) {
-            // This is where you run code if the server returns any errors
-            //console.log(error);
-        });
-}
+ 
 //Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
 function UpdateWaterFlowStatus(id, text) {
     //Si on ne peut pas afficher

@@ -32,8 +32,8 @@ int Actionneurs::SetValueElectrovanne1OFF()
 
     if (ActiverElectrovanneEauPluie == true)
     {
-        cout << "Electrovanne eau courante bien désactivé" << endl;
-        return 1;
+        cout << "Electrovanne eau de pluie bien activé" << endl;
+        return 2;
     }
     else
     {

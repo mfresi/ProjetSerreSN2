@@ -25,7 +25,6 @@
 </div>
 
     <p id="conso"></p>
-    <div class="haut-droite">
     <input class="button button2" type=button onclick=window.location.href="index.php" value="Retour page principale" />
     </div>
     
