@@ -1,13 +1,14 @@
-//Pour compiler : g++ -g ModuleTestActionneurs.cpp  ../class/Capteurs.cpp ../class/ModBusTCPClient.cpp -o TestActionneurs
+//Pour compiler : g++ -g ModuleTestActionneurs.cpp  ../class/Capteurs.cpp ../class/ModBusTCPClient.cpp ../class/Actionneurs.cpp -o TestActionneurs
 #include <iostream>
 #include "../class/SystemData.h"
 #include "../class/Capteurs.h"
+#include "../class/Actionneurs.h"
 using namespace std;
 int main()
 {
 
     Capteurs Capteurs("192.168.65.120", 502); //On crée l'objet capteurs afin de récupérer les informations
-
+    Actionneurs Actionneurs("192.168.65.120",502);
     float temp;
     bool niveau1;
     bool niveau2;
@@ -84,10 +85,12 @@ int main()
     if (temp >= 2 && niveau2 == 1)
     { //On verifie si la cuve de pluie(haut) est déja remplie (0 = Vide, 1 = remplie)
         std::cout << "On peut utiliser l'eau de pluie \n";
+        Actionneurs.SetValueElectrovanne1OFF();
     }
 
     if (temp <= 1 || niveau2 == 0)
     {
         std::cout << "On peut utilise l'eau courante \n";
+        Actionneurs.SetValueElectrovanne1ON();
     }
 }

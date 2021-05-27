@@ -1,13 +1,14 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
-// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient -lpthread && ./output
+// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) -lpthread && ./output
 // compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output -lpthread && ./output
 
 #include "class/TCPServeur.h"
 #include "class/SystemData.h"
 #include "class/Capteurs.h"
-//#include "class/BDD.h"
+#include "class/BDD.h"
 #include <string>
+#include <mutex>
 
 using namespace std;
 
@@ -19,6 +20,8 @@ public:
         cout << "Un client se connecte avec la socket " << csock << " avec l'ip " << inet_ntoa(csinIp.sin_addr) << " sur le port " << htons(csinPort.sin_port) << endl;
     };
 };
+
+std::mutex synchro;
 
 void getRandomValues(tempMemory *cache, Capteurs capteurs)
 {
@@ -71,6 +74,8 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     string eau;
     string waterConso;
     string electricalConso;
+
+    synchro.lock();
     temperature = to_string((float)cache.systemData.temperatureValue);
     waterLevel1 = to_string(cache.systemData.waterLevelValue1);
     waterLevel2 = to_string(cache.systemData.waterLevelValue2);
@@ -79,6 +84,7 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     electricalConso = to_string(cache.systemData.electricalConsommationValue);
     pompe = to_string(cache.systemData.pompe);
     eau = to_string(cache.systemData.eau);
+    synchro.unlock();
     //const char *req = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (" + cache.systemData.temperatureValue + ", " + cache.systemData.waterLevel1 + ", " + cache.systemData.waterLevel3 + ");";
 
     resultReadBuffer = tcpServeur.readBuffer();
@@ -123,23 +129,14 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
 
         tcpServeur.closeSocketClient();
 
-        /* if (resultWriteToClient == true)
+        if (resultWriteToClient == true)
         {
             cout << "Chaine envoyée avec succès" << endl;
-            /*resultRequest = Bdd.query(req);
-            if (resultRequest == true)
-            {
-                cout << "Insertion en BDD OK !" << endl;
-            }
-            else
-            {
-                cout << "Pas réussi à insérer en BDD" << endl;
-            }
         }
         else
         {
             cout << "Pas réussi à envoyer la chaine" << endl;
-        } */
+        }
     }
     else
     {
@@ -153,6 +150,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs)
     do
     {
         cout << "Mise à jour du cache ..." << endl;
+        synchro.lock();
         getRandomValues(cache, capteurs);
         cout << "Temperature : " << cache->systemData.temperatureValue << endl;
         cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
@@ -162,6 +160,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs)
         cout << "consommation electrique : " << cache->systemData.electricalConsommationValue << endl;
         cout << "Etat de la pompe : " << cache->systemData.pompe << endl;
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;
+        synchro.unlock();
         // Mettre une attente de 1 minute.
         this_thread::sleep_for(chrono::seconds(60));
     } while (true);
@@ -182,12 +181,12 @@ int main()
     bool etat = false;
     bool resultInitializeBdd;
     bool resultConnectBdd;
-    const char *host = "mysql-projet-serre-eau.alwaysdata.net";
-    const char *login = "231030_mattei";
-    const char *password = "37pgmh55";
-    const char *bdd = "projet-serre-eau_bddeau";
+    const char *host = "192.168.65.54";
+    const char *login = "root";
+    const char *password = "root";
+    const char *bdd = "Serre";
     TCPServeur tcpServeur;
-    //BDD Bdd;
+    BDD Bdd;
     myServerEventListener myEventListener;
     tempMemory cache;
     Capteurs capteurs("192.168.65.120", 502);
@@ -198,9 +197,9 @@ int main()
     {
         thread updateCacheThread(updateCache, &cache, capteurs);
         updateCacheThread.detach();
-        //resultInitializeBdd = Bdd.initializeBdd();
+        resultInitializeBdd = Bdd.initializeBdd();
 
-       /* if (resultInitializeBdd == true)
+       if (resultInitializeBdd == true)
         {
             resultConnectBdd = Bdd.connectBdd(host, login, password, bdd);
 
@@ -216,7 +215,7 @@ int main()
         else
         {
             cout << "Pas réussi à allouer la mémoire pour Mysql" << endl;
-        } */
+        }
         resultCreateSocket = tcpServeur.createSocket();
 
         if (resultCreateSocket == true)

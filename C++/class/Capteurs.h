@@ -8,14 +8,14 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
-#include "ModBusTCPClient.h"
+
 
 using namespace std;
 
 class Capteurs
 {
     private :  
-    SOCKET sock;
+
 
     public :
     

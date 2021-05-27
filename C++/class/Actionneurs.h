@@ -8,17 +8,17 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
-#include "ModBusTCPClient.h"
+
 
 using namespace std;
 
 class Actionneurs {
 
 private : 
-	int addr;
-
+	
 public :
-	Actionneurs();
-	int SetValue(bool value);
+	Actionneurs(const char * addr, int port);
+	int SetValueElectrovanne1ON();
+	int SetValueElectrovanne1OFF();
 
-}
+};

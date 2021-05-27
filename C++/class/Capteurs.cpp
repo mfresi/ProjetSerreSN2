@@ -1,5 +1,5 @@
 #include "Capteurs.h"
-
+#include "ModBusTCPClient.h"
 ModBusTCPClient Client;
 
 Capteurs::Capteurs(const char *addr, int port)
@@ -62,6 +62,7 @@ int Capteurs::getNiveauEau()
             return 3;
         }
     }
+        return -1;
 }
 
 float Capteurs::getWaterconsommation()

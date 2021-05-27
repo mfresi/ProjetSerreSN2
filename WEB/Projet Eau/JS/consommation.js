@@ -1,30 +1,32 @@
-function insertBDD() 
-{
+function updateChart() {
     //pour appeler une API on utilise la méthode fetch()
     fetch('API/Conso.php').then((response) => response.json())
-        .then(function(data) 
-        {
+        .then(function(data) {
             // data est la réponse http de notre API.
-            console.log(data);
-            UpdateDivConso("conso", data);
+            console.log("temperature : " + data);
+            //console.log("Heure : " + data[1]);
+            //addData(chart, 15, data);
         })
         .catch(function(error) {
             // This is where you run code if the server returns any errors
-            //console.log(error);
+            console.log(error);
         });
 }
 
-function UpdateDivConso(id, text) 
-{
-    if (text == true) {
-        var e = document.getElementById(id).innerHTML = "Connexion à la base OK";
-    }
-    else
-    {
-        var e = document.getElementById(id).innerHTML = "Pas réussi à connecter en base";
-    }
+function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
+    chart.update();
 }
 
-setInterval("insertBDD()", 60000);
- //setInterval("refreshWaterConso()", 1000);
+function info()
+{
+    // Parametre -> chart, heure, valueConso
+    addData(chart, 10, 19);
+    console.log("Div Maj");
+}
 
+//setInterval("updateChart()", 10000);
+//setInterval("info()", 10000);

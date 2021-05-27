@@ -38,7 +38,6 @@
         $conso->displayArchivage();
     }
 
-
     if(isset($_POST['archiver']))
     {
         $resultArchivage = $conso->archiveData();

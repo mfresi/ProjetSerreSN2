@@ -232,9 +232,6 @@
             </div>
         </section>
         <div id="Graphique"><canvas id="myChart"></canvas></div>
-        <div id="Graphique"><canvas id="graph"></canvas></div>
-
-        <p id="RandomValuesStatus"></p>
 
         <!--screen short section-->
 
@@ -256,12 +253,11 @@
                             <script src="assets/js/swiper.min.js"></script>
                             <script src="assets/js/jquery.collapse.js"></script>
                             <script src="assets/js/bootsnav.js"></script>
-                            <script src="JS/consommation.js"></script>
                             <script src="JS/Capteurs.js"></script>
+                            <script src="JS/consommation.js"></script>
                             <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
                             <script src="assets/js/plugins.js"></script>
                             <script src="assets/js/main.js"></script>
-
                         </div>
                     </div>
                 </div>
