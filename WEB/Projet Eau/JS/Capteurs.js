@@ -122,6 +122,8 @@ function getPumpStatus() {
             //console.log(error);
         });
 }
+
+
 //Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
 function UpdatePumpStatus(id, text) {
     //Si on ne peut pas afficher
@@ -132,6 +134,21 @@ function UpdatePumpStatus(id, text) {
     } else if (text == "1") {
         var e = document.getElementById(id).innerHTML = "La pompe est entrain d'être utilisé";
     }
+}
+
+function getWaterflowStatus() {
+    //pour appeler une API on utilise la méthode fetch()
+    //pour appeler une API on utilise la méthode fetch()
+    fetch('API/WaterFlow.php').then((response) => response.json())
+        .then(function(data) {
+            // data est la réponse http de notre API.
+            console.log(data);
+            UpdateWaterFlowStatus("WaterFlow", data);
+        })
+        .catch(function(error) {
+            // This is where you run code if the server returns any errors
+            //console.log(error);
+        });
 }
  
 //Va permettre le refresh auto du niveau de la cuve de pluie (id de la div, text = les données retourné)
@@ -147,6 +164,7 @@ function UpdateWaterFlowStatus(id, text) {
         var e = document.getElementById(id).innerHTML = "L'eau courante est utilisée";
     }
 }
+
 function UpdateInsertBddStatus(id, text) {
     if (text == true)
     {
@@ -169,6 +187,6 @@ setInterval("getTemperature()", refreshValuesTime);
 setInterval("getNiv1()", refreshValuesTime);
 setInterval("getNiv2()", refreshValuesTime);
 setInterval("getPumpStatus()", refreshValuesTime);
-setInterval("getWaterFlowStatus()", refreshValuesTime);
+setInterval("getWaterflowStatus()", refreshValuesTime);
 // Pause de 10 minutes pour l'insert en base.
 //setInterval("addConsoValue()", 5000)

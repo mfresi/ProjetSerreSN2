@@ -2,12 +2,12 @@
 // Dev by Mattei FRESI
 
 #include <iostream>
-#include <mysql/mysql.h>
+#include <mysql.h>
 #include <cstring>
 
 using namespace std;
 
-// command to compile file -> g++ bdd.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient && ./output
+// command to compile file -> g++ bdd.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) && ./output
 
 int main(void)
 {
@@ -15,11 +15,11 @@ int main(void)
     MYSQL mysql;
     char response;
     int result;
-    const char * request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (12, 45, 23);";
-    const char * host = "mysql-projet-serre-eau.alwaysdata.net";
-    const char * login = "231030_mattei";
-    const char * password = "37pgmh55";
-    const char * bdd = "projet-serre-eau_bddeau";
+    const char * request = "INSERT INTO `consommation`(`eau_courante`, `eau_pluie`, `electrique`, `heure`) VALUES (12, 45, 23);";
+    const char * host = "192.168.65.54";
+    const char * login = "root";
+    const char * password = "root";
+    const char * bdd = "Serre";
 
     // Allouage de la mémoire pour l'objet MYSQL.
     // Prend en paramètre un pointeur de l'objet MYSQL.
