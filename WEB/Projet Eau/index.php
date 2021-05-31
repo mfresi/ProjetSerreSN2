@@ -316,6 +316,9 @@
         <option value="13">13</option>
         <option value="14">14</option>
         <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
     </select>
 
     <button onclick="setIntervalGraph()">Filtrer la date</button>
@@ -328,8 +331,6 @@ $conso = new capteurs;
 ?>
 
 <script>
-
-    var value = document.getElementById.innerHTML = 
     //Déclaration des variables.
     var date = new Date();
     var ctx = document.getElementById('myChart');

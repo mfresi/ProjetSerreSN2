@@ -18,7 +18,7 @@ using namespace std;
 class Actionneurs {
 
 private : 
-	ModBusTCPClient iencli;
+	ModBusTCPClient clientActionneurs;
 public :
 	Actionneurs(const char * addr, int port);
 	int SetReseauEauCourante();

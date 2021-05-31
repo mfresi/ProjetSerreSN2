@@ -36,29 +36,7 @@
     {
         $conso->displayArchivage();
     }
-
-    if(isset($_POST['archiver']))
-    {
-        $resultArchivage = $conso->archiveData();
-
-        if ($resultArchivage = true)
-        {
-            echo "Archivage des données OK";
-        }
-        else
-        {
-            echo "pas réussi à archiver les données";
-        }
-
-        $conso->purgeTable();
-    }
-   /* echo $conso;
-    if(isset($_POST['truncate']))
-    {
-    $requete = ("SELECT * FROM `consommation`");
-    $requete2 = ("INSERT INTO `test`(`id_consommation`, `eau_pluie`, `eau_courante`, `electrique`, `date`) VALUES ('?,?,?,?')");
-    $requete3 = ("TRUNCATE TABLE `consommation`");
-    }*/
+ 
 ?>
 
 </body>

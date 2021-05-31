@@ -14,5 +14,6 @@ function updateChart() {
 }
 
 
+
 //setInterval("updateChart()", 10000);
 //setInterval("info()", 10000);

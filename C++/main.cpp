@@ -133,9 +133,10 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         waterLevel1 = 0;
         waterLevel2 = 0;
         cout << "On utilise l'eau courante" << endl;
-        actionneurs.SetReseauEauCourante();
-        //usleep(1500);
-        actionneurs.SetPumpOFF();
+        if (pompe != 1)
+        {
+             actionneurs.SetReseauEauCourante();
+        }
         eau = 0;
     }
     else if (temperature < 2)
@@ -293,7 +294,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, 
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;
         synchro.unlock();
         // Mettre une attente de 1 minute.
-        this_thread::sleep_for(chrono::seconds(600));
+        this_thread::sleep_for(chrono::seconds(10));
     } while (true);
 }
 

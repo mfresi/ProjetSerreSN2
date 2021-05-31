@@ -21,6 +21,16 @@
         chart.update();
         console.log("chart mis à jour");
     }
+
+    function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+        console.log(data);
+    });
+    chart.update();
+    console.log("chart update");
+}
 </script>
 
 <body>
@@ -102,4 +112,6 @@
             }
         }
     });
+
+    setInterval("addData()", 10000);
 </script>
