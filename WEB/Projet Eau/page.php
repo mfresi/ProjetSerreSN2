@@ -72,14 +72,23 @@
         .then(function(data) {
             // data est la réponse http de notre API.
             console.log(data);
+            //S'il est minuit on archive les conso
+            if (data == "10:12")
+            {
+                console.log("Archivage OK");
+            }
+            else
+            {
+                console.log("Archivage pas OK");
+            }
         })
         .catch(function(error) {
             // This is where you run code if the server returns any errors
             //console.log(error);
         });
 }
-
-setInterval("archiveData()", 1000);
+// On appel la fonction archiveData toutes les heures.
+setInterval("archiveData()", 3600000);
 </script>
 
 

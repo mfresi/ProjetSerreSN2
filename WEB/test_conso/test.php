@@ -24,7 +24,7 @@
 </script>
 
 <body>
-    <div id="Graphique"><canvas id="myChart"></canvas></div>
+    <div id="Graphique"><canvas height="70" id="myChart"></canvas></div>
 
     <select id="minGraph" name="Heure min">
         <option>Heure Min</option>

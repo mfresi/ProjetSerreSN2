@@ -1,6 +1,6 @@
 #include "Actionneurs.h"
-#include "ModBusTCPClient.h"
-ModBusTCPClient iencli;
+
+
 
 Actionneurs::Actionneurs(const char * addr, int port)
 {   

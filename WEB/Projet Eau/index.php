@@ -32,6 +32,21 @@
     <script src="assets/js/vendor/modernizr-2.8.3-respond-1.4.2.min.js"></script>
 </head>
 
+<script>
+    function setIntervalGraph() {
+        var minGraphValue = document.getElementById("minGraph").value;
+        var maxGraphValue = document.getElementById("maxGraph").value;
+        var minConvert = parseInt(minGraphValue);
+        var maxConvert = parseInt(maxGraphValue);
+        console.log(minConvert);
+        console.log(maxConvert);
+        chart.options.scales.x.min = minConvert;
+        chart.options.scales.x.max = maxConvert;
+        chart.update();
+        console.log("chart mis à jour");
+    }
+</script>
+
 <body data-spy="scroll" data-target=".navbar-collapse">
 
 
@@ -231,7 +246,7 @@
                 </div>
             </div>
         </section>
-        <div id="Graphique"><canvas id="myChart"></canvas></div>
+        <div id="Graphique"><canvas height="90" id="myChart"></canvas></div>
 
         <!--screen short section-->
 
@@ -264,72 +279,94 @@
             </div>
         </section>
     </div>
+    <select id="minGraph" name="Heure min">
+        <option>Heure Min</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+    </select>
 
-    </html>
+    <select id="maxGraph" name="Heure max">
 
-    <?php
-    $conso = new capteurs;
-    ?>
+        <option>Heure Max</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+    </select>
 
-    <script>
-        //Déclaration des variables.
-        var date = new Date();
-        var ctx = document.getElementById('myChart');
-        var chart = new Chart(ctx, {
-            // Le type de graphique
-            type: 'bar',
-            // Les données
-            data: {
-                labels: [<?php echo $conso->getHour(); ?>],
-                datasets: [
-                    {
-                        label: 'Consommation en eau courante en fonction du temps',
-                        backgroundColor: 'rgb(51, 209, 255)',
-                        borderColor: 'rgb(51, 209, 255)',
-                        data: [<?php echo $conso->getWaterConsoCourante(); ?>]
-                    },
-                    {
-                        label: 'Consommation électique en fonction du temps',
-                        backgroundColor: 'rgb(243, 255, 0)',
-                        borderColor: 'rgb(243, 255, 0)',
-                        data: [<?php echo $conso->getConsoElec(); ?>]
-                    },
-                    {
-                        label: 'Consommation en eau de pluie en fonction du temps',
-                        backgroundColor: 'rgb(51, 255, 249)',
-                        borderColor: 'rgb(51, 255, 249)',
-                        data: [<?php echo $conso->getWaterConsoPluie(); ?>]
-                    }
-                ]
-            },
-            // Configuration options go here
-            options: {
-                scales: {
-                    xAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }],
-                    yAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Litres'
-                        }
-                    }],
-                    xAxes: [{
-                        display: true,
-                        scaleLabel: {
-                            display: true,
-                            labelString: 'Heure'
-                        }
-                    }]
+    <button onclick="setIntervalGraph()">Filtrer la date</button>
+</body>
+
+</html>
+
+<?php
+$conso = new capteurs;
+?>
+
+<script>
+
+    var value = document.getElementById.innerHTML = 
+    //Déclaration des variables.
+    var date = new Date();
+    var ctx = document.getElementById('myChart');
+    var chart = new Chart(ctx, {
+        // Le type de graphique
+        type: 'bar',
+        // Les données
+        data: {
+            labels: [<?php echo $conso->getHour(); ?>],
+            datasets: [{
+                    label: 'Consommation en eau courante en fonction du temps',
+                    backgroundColor: 'rgb(51, 209, 255)',
+                    borderColor: 'rgb(51, 209, 255)',
+                    data: [<?php echo $conso->getWaterConsoCourante(); ?>]
+                },
+                {
+                    label: 'Consommation électique en fonction du temps',
+                    backgroundColor: 'rgb(243, 255, 0)',
+                    borderColor: 'rgb(243, 255, 0)',
+                    data: [<?php echo $conso->getConsoElec(); ?>]
+                },
+                {
+                    label: 'Consommation en eau de pluie en fonction du temps',
+                    backgroundColor: 'rgb(51, 255, 249)',
+                    borderColor: 'rgb(51, 255, 249)',
+                    data: [<?php echo $conso->getWaterConsoPluie(); ?>]
+                }
+            ]
+        },
+        // Configuration options go here
+        options: {
+            scales: {
+                x: {
+                    min: 0,
+                    max: 15
                 }
             }
-        });
-
-       
-
-     
-
-    </script>
+        }
+    });
+</script>

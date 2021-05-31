@@ -21,16 +21,6 @@ function addData(chart, label, data) {
     chart.update();
 }
 
-function updateChartData(chart, data, dataSetInedex){
-    chart.data.datasets[dataSetInedex].data = data;
-    chart.update();
-}
-
-function applyFilter(value)
-{
-    
-}
-
 function applyDateFilter()
 {
     this.barChart.data.labels = this.levelsArr.slice(parseInt(this.from), parseInt(this.toMonth));

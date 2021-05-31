@@ -9,7 +9,12 @@ bool ModBusTCPClient::createSocket()
     this->sock = socket(AF_INET, SOCK_STREAM, 0);
 
     if (this->sock != INVALID_SOCKET)
-    {
+    {   
+    {   int yes = 1;
+	setsockopt(sock, IPPROTO_TCP, TCP_CORK, (void*)&yes,sizeof(int));
+	yes = 0;
+    int result = setsockopt(sock,IPPROTO_TCP,TCP_NODELAY,(void*)&yes,sizeof(int));
+    }
         return true;
     }
     else
@@ -56,7 +61,7 @@ bool ModBusTCPClient::sendBuffer(char octet1, char octet2, char octet3, char oct
     buffer[10] = octet11;
     buffer[11] = octet12;
 
-    int error_message = send(this->sock, buffer, 12, 0);
+    int error_message = send(this->sock, buffer, 12, MSG_EOR);
     // Gestion d'erreur de la méthode send().
     if (error_message == SOCKET_ERROR)
     {

@@ -35,6 +35,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     int mois = 1 + ltm->tm_mon;
     int jour = ltm->tm_mday;
     int heures = ltm->tm_hour;
+    int minutes = ltm->tm_min;
     float temperature = capteurs.getTemperature();
     int etatWaterLevel = capteurs.getNiveauEau();
     int waterConso = capteurs.getWaterconsommation();
@@ -49,7 +50,8 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     const char *password = "root";
     const char *Bdd = "Serre";
     char DATE[10];
-    snprintf(DATE,11,"%d-0%d-%d\n",annee,mois,jour);
+    char archiveDate[10];
+    snprintf(DATE, 11, "%d-0%d-%d\n", annee, mois, jour);
     string waterconso;
     string electricalConso;
     string date = DATE;
@@ -57,11 +59,15 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     electricalConso = to_string(ElectricalConso);
     waterconso = to_string(waterConso);
     heure = to_string(heures);
-    cout << "Date : " << date << endl;
-    string request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) VALUES (" + waterconso + " , " + waterconso + ", " + electricalConso + ", " + date + ", " + heure + ");";
+    cout << "Heure : " << heures << endl;
+    string request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) VALUES (" + waterconso + " , " + waterconso + ", " + electricalConso + ", '2021-05-31', " + heure + ");";
+    string requestToArchive = "INSERT INTO `archives`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) SELECT `eau_pluie`, `eau_courante`, `electrique`, `date`, `heure` FROM `consommation`;";
+    string purgeRequest = "TRUNCATE TABLE `consommation`;";
     bool resultInitializeBdd;
     bool resultConnectBdd;
     bool resultQuery;
+    bool resultQueryArchivage;
+    bool resultPurge;
 
     resultInitializeBdd = bdd.initializeBdd();
 
@@ -77,11 +83,39 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
             if (resultQuery == true)
             {
                 cout << "Insertion en base OK" << endl;
-                bdd.closeBdd();
             }
             else
             {
                 cout << "Pas réussi à insert en base" << endl;
+            }
+
+            if (heures == 00)
+            {
+                resultQueryArchivage = bdd.query(requestToArchive.c_str());
+                
+                if (resultQueryArchivage == true)
+                {
+                    cout << "Archivage OK" << endl;
+                    resultPurge = bdd.query(purgeRequest.c_str());
+                    bdd.closeBdd();
+
+                    if (resultPurge == true)
+                    {
+                        cout << "Table purge" << endl;
+                    }
+                    else
+                    {
+                        cout << "Pas réussi à purge" << endl;
+                    }
+                }
+                else
+                {
+                    cout << "Pas réussi à archiver" << endl;
+                }
+            }
+            else
+            {
+                cout << "Pas la bonne heure pour archiver" << endl;
             }
         }
         else
@@ -95,11 +129,13 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     }
 
     if (etatWaterLevel == 0)
-    {   
+    {
         waterLevel1 = 0;
         waterLevel2 = 0;
         cout << "On utilise l'eau courante" << endl;
         actionneurs.SetReseauEauCourante();
+        //usleep(1500);
+        actionneurs.SetPumpOFF();
         eau = 0;
     }
     else if (temperature < 2)
@@ -119,38 +155,37 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
             actionneurs.SetPumpON();
             pompe = 1;
         }
-
     }
 
     else if (etatWaterLevel == 2)
-    {   
+    {
         waterLevel1 = 0;
         waterLevel2 = 1;
         actionneurs.SetPumpOFF();
+        //usleep(1500);
         pompe = 0;
 
         if (temperature > 2)
         {
-        cout << "on utilise l'eau de pluie" << endl;
-        actionneurs.SetReseauEauPluie();
-        eau = 1;
+            cout << "on utilise l'eau de pluie" << endl;
+            actionneurs.SetReseauEauPluie();
+            eau = 1;
         }
-        
     }
     else if (etatWaterLevel == 3)
     {
         waterLevel1 = 1;
         waterLevel2 = 1;
         actionneurs.SetPumpOFF();
+        //usleep(1500);
 
         if (temperature > 2)
         {
-        cout << "on utilise l'eau de pluie" << endl;
-        actionneurs.SetReseauEauPluie();
-        pompe = 0;
-        eau = 1;
+            cout << "on utilise l'eau de pluie" << endl;
+            actionneurs.SetReseauEauPluie();
+            pompe = 0;
+            eau = 1;
         }
-        
     }
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
     cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
@@ -258,7 +293,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, 
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;
         synchro.unlock();
         // Mettre une attente de 1 minute.
-        this_thread::sleep_for(chrono::seconds(10));
+        this_thread::sleep_for(chrono::seconds(600));
     } while (true);
 }
 
