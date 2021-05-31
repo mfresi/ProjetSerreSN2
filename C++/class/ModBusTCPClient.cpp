@@ -5,6 +5,7 @@
 // Return true en cas de succès et false en cas d'échec.
 bool ModBusTCPClient::createSocket()
 {
+    transactionId = 0;
     this->sock = socket(AF_INET, SOCK_STREAM, 0);
 
     if (this->sock != INVALID_SOCKET)
@@ -18,7 +19,7 @@ bool ModBusTCPClient::createSocket()
 }
 // Méthode connectSocket de type bool qui prend en paramètre une adresse de type const char * et un port de type int.
 // Return true en cas de succès et false en cas d'échec.
-bool ModBusTCPClient::connectSocket(const char * address, int port)
+bool ModBusTCPClient::connectSocket(const char *address, int port)
 {
     // Mettre 192.168.65.120 pour l'adresse et 502 pour le port.
     sin.sin_addr.s_addr = inet_addr(address);
@@ -41,20 +42,21 @@ bool ModBusTCPClient::connectSocket(const char * address, int port)
 bool ModBusTCPClient::sendBuffer(char octet1, char octet2, char octet3, char octet4, char octet5, char octet6, char octet7, char octet8, char octet9, char octet10, char octet11, char octet12)
 {
     char buffer[12];
-    buffer[0] = octet1;
-    buffer[1] = octet2;
-    buffer[2] = octet3;
-    buffer[3] = octet4;
-    buffer[4] = octet5;
-    buffer[5] = octet6;
-    buffer[6] = octet7;
+    buffer[0] = (transactionId & 0xFF00) >> 8;
+    buffer[1] = (transactionId & 0x00FF);
+    transactionId++;
+    buffer[2] = 0x00;
+    buffer[3] = 0x00;
+    buffer[4] = 0x00;
+    buffer[5] = 0x06;
+    buffer[6] = 0x00;
     buffer[7] = octet8;
     buffer[8] = octet9;
     buffer[9] = octet10; // Adresse du capteur.
     buffer[10] = octet11;
     buffer[11] = octet12;
 
-    int error_message = send(this->sock, &buffer, 12, 0);
+    int error_message = send(this->sock, buffer, 12, 0);
     // Gestion d'erreur de la méthode send().
     if (error_message == SOCKET_ERROR)
     {
@@ -72,24 +74,22 @@ float ModBusTCPClient::recvTemperature()
     char bufferTempOctet12[50];
     char bufferT[50];
 
-    int messageRecu = recv(sock, &bufferRecv, 13, 0);
+    int messageRecu = recv(sock, bufferRecv, 13, 0);
 
     if (messageRecu != 0)
     {
         snprintf(bufferTempOctet11, 6, "0x%2.2hhX \n", bufferRecv[11]);
         snprintf(bufferTempOctet12, 6, "0x%2.2hhX \n", bufferRecv[12]);
-        snprintf(bufferT, 10, "0x%2.2hhX 0x%2.2hhX \n", bufferRecv[11], bufferRecv[12]);
         float temp2 = atof(bufferTempOctet11);
         float temp = atof(bufferTempOctet12);
-        float tempT = atof(bufferT);
-        
+
         if (temp <= 255 && temp2 == 0)
         {
             return temp / 10;
         }
         else
         {
-            return (temp2 * (16*16) + temp) / 10;
+            return (temp2 * (16 * 16) + temp) / 10;
         }
     }
     else
@@ -102,7 +102,7 @@ int ModBusTCPClient::recvWaterLevel()
     char bufferRecv[50];
     char bufferTemp[50];
 
-    int messageRecu = recv(sock, &bufferRecv, 11, 0);
+    int messageRecu = recv(sock, bufferRecv, 11, 0);
 
     if (messageRecu != 0)
     {
@@ -115,25 +115,39 @@ int ModBusTCPClient::recvWaterLevel()
         return -1;
     }
 }
-float ModBusTCPClient::recvWaterConso(){
 
-char bufferRecv[50];
-char bufferTemp[50];
+float ModBusTCPClient::recvWaterConso()
+{
 
-    int messageRecu = recv(sock, &bufferRecv, 11, 0);
+    char bufferRecv[50];
+    char bufferTempOctet9[50];
+    char bufferTempOctet10[50];
+    char bufferT[50];
+
+    int messageRecu = recv(sock, bufferRecv, 11, 0);
 
     if (messageRecu != 0)
     {
-        snprintf(bufferTemp, 6, "0x%2.2hhX \n", bufferRecv[10]);
-        int PulseNumber = atof(bufferTemp);
-        return PulseNumber/10;
+        snprintf(bufferTempOctet9, 6, "0x%2.2hhX \n", bufferRecv[9]);
+        snprintf(bufferTempOctet10, 6, "0x%2.2hhX \n", bufferRecv[10]);
+        float Waterconso2 = atof(bufferTempOctet9);
+        float Waterconso1 = atof(bufferTempOctet10);
+
+        if (Waterconso1 <= 255 && Waterconso2 == 0)
+        {
+            return Waterconso1 / 10;
+        }
+        else
+        {
+            return (Waterconso2 * (16 * 16) + Waterconso1) / 10;
+        }
     }
     else
     {
-        return 0;
+        return false;
     }
-
 }
+
 bool ModBusTCPClient::closeSocket()
 {
     int resultCloseSocket;
@@ -149,5 +163,3 @@ bool ModBusTCPClient::closeSocket()
         return false;
     }
 }
-
-

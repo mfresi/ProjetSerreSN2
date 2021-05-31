@@ -7,39 +7,64 @@ Actionneurs::Actionneurs(const char * addr, int port)
     iencli.createSocket();
     iencli.connectSocket(addr, port);
 }
-int Actionneurs::SetValueElectrovanne1ON()
+int Actionneurs::SetReseauEauPluie()
 {
-      //Trame pour temperature : 00 01 00 00 00 06 01 04 00 63 00 02.
+ 
     int ActiverElectrovanneEauPluie = iencli.sendBuffer(0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0xff, 0x05, 0x00, 0xC7, 0xFF, 0x00);
 
     if (ActiverElectrovanneEauPluie == true)
     {
-        cout << "Electrovanne eau courante bien activé" << endl;
         return 1;
     }
     else
     {
-                
-        cout << "Message non envoyé" << endl;
         return false;
     }
 }
 
-int Actionneurs::SetValueElectrovanne1OFF()
+int Actionneurs::SetReseauEauCourante()
 {
-      //Trame pour temperature : 00 01 00 00 00 06 01 04 00 63 00 02.
+    
     int ActiverElectrovanneEauPluie = iencli.sendBuffer(0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0xff, 0x05, 0x00, 0xC7, 0x00, 0x00);
 
     if (ActiverElectrovanneEauPluie == true)
     {
-        cout << "Electrovanne eau de pluie bien activé" << endl;
         return 2;
     }
     else
     {
-                
-        cout << "Message non envoyé" << endl;
         return false;
     }
 }
+
+int Actionneurs::SetPumpON()
+{
+ 
+    int ActiverElectrovanneEauPluie = iencli.sendBuffer(0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0xff, 0x05, 0x00, 0xC8, 0xFF, 0x00);
+
+    if (ActiverElectrovanneEauPluie == true)
+    {
+        return 1;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+int Actionneurs::SetPumpOFF()
+{
+ 
+    int ActiverElectrovanneEauPluie = iencli.sendBuffer(0x00, 0x00, 0x00, 0x00, 0x00, 0x06, 0xff, 0x05, 0x00, 0xC8, 0x00, 0x00);
+
+    if (ActiverElectrovanneEauPluie == true)
+    {
+        return 1;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 

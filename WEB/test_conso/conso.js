@@ -13,6 +13,26 @@ function updateChart() {
         });
 }
 
+function addData(chart, label, data) {
+    chart.data.labels.push(label);
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.push(data);
+    });
+    chart.update();
+}
 
-//setInterval("updateChart()", 10000);
-//setInterval("info()", 10000);
+function updateChartData(chart, data, dataSetInedex){
+    chart.data.datasets[dataSetInedex].data = data;
+    chart.update();
+}
+
+function applyFilter(value)
+{
+    
+}
+
+function applyDateFilter()
+{
+    this.barChart.data.labels = this.levelsArr.slice(parseInt(this.from), parseInt(this.toMonth));
+    this.barChart.update();
+}

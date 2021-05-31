@@ -15,7 +15,7 @@ int main(void)
     MYSQL mysql;
     char response;
     int result;
-    const char * request = "INSERT INTO `consommation`(`eau_courante`, `eau_pluie`, `electrique`, `heure`) VALUES (12, 45, 23);";
+    const char * request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `heure`) VALUES (12, 45, 23, 14);";
     const char * host = "192.168.65.54";
     const char * login = "root";
     const char * password = "root";

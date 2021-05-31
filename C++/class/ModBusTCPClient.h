@@ -1,3 +1,5 @@
+#ifndef MODBUSTCPCLIENT_H
+#define MODBUSTCPCLIENT_H
 // Déclaration de la classe ModBusTCPClient.
 // Permet de communiquer avec la carte E/S par protocole modbus pour récupérer les valeurs des capteurs et piloter les actionneurs avec les classes Capteurs et Actionneurs.
 // Dev by Frezale.
@@ -11,6 +13,7 @@
 #include <errno.h>
 #include <string.h>
 #include <iostream>
+#include <stdint.h>
 
 #define INVALID_SOCKET -1
 #define SOCKET_ERROR -1
@@ -25,6 +28,7 @@ private:
 
     SOCKET sock;
     SOCKADDR_IN sin;
+    uint16_t transactionId;
 
 public:
 
@@ -36,3 +40,5 @@ public:
     float recvWaterConso();
     bool closeSocket();
 };
+
+#endif

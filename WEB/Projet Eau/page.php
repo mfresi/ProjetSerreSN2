@@ -64,5 +64,23 @@
 </body>
 </html>
 
+<script>
+    function archiveData() {
+    //pour appeler une API on utilise la méthode fetch()
+    //pour appeler une API on utilise la méthode fetch()
+    fetch('API/archiveDate.php').then((response) => response.json())
+        .then(function(data) {
+            // data est la réponse http de notre API.
+            console.log(data);
+        })
+        .catch(function(error) {
+            // This is where you run code if the server returns any errors
+            //console.log(error);
+        });
+}
+
+setInterval("archiveData()", 1000);
+</script>
+
 
 

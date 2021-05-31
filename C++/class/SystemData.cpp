@@ -1,6 +1,6 @@
 #include "SystemData.h"
 
-void tempMemory::saveValueInCache(float temperature, bool waterLevel1, bool waterLevel2, bool waterLevel3, float waterConsommation, int electricalConsommation, bool pompe, bool eau)
+void tempMemory::refreshSystemState(float temperature, bool waterLevel1, bool waterLevel2, bool waterLevel3, float waterConsommation, int electricalConsommation, bool pompe, bool eau)
 {
     systemData.temperatureValue = temperature;
     systemData.waterLevelValue1 = waterLevel1;

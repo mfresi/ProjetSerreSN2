@@ -10,6 +10,7 @@
 #include "class/Actionneurs.h"
 #include <string>
 #include <mutex>
+#include <ctime>
 
 using namespace std;
 
@@ -24,91 +25,135 @@ public:
 
 std::mutex synchro;
 
-void getRandomValues(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
+void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, BDD bdd)
 {
+    // date / heure actuelle basée sur le système actuel
+    time_t actuel = time(0);
+    tm *ltm = localtime(&actuel);
+    // afficher divers member de la structure tm.
+    int annee = 1900 + ltm->tm_year;
+    int mois = 1 + ltm->tm_mon;
+    int jour = ltm->tm_mday;
+    int heures = ltm->tm_hour;
     float temperature = capteurs.getTemperature();
     int etatWaterLevel = capteurs.getNiveauEau();
-    float waterConso = capteurs.getWaterconsommation();
+    int waterConso = capteurs.getWaterconsommation();
     bool waterLevel1;
     bool waterLevel2;
     bool pompe;
     bool eau;
     int ElectricalConso = rand() % 30;
     bool waterLevel3 = 0;
-    if (etatWaterLevel == 0)
+    const char *host = "192.168.65.54";
+    const char *login = "root";
+    const char *password = "root";
+    const char *Bdd = "Serre";
+    char DATE[10];
+    snprintf(DATE,11,"%d-0%d-%d\n",annee,mois,jour);
+    string waterconso;
+    string electricalConso;
+    string date = DATE;
+    string heure;
+    electricalConso = to_string(ElectricalConso);
+    waterconso = to_string(waterConso);
+    heure = to_string(heures);
+    cout << "Date : " << date << endl;
+    string request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) VALUES (" + waterconso + " , " + waterconso + ", " + electricalConso + ", " + date + ", " + heure + ");";
+    bool resultInitializeBdd;
+    bool resultConnectBdd;
+    bool resultQuery;
+
+    resultInitializeBdd = bdd.initializeBdd();
+
+    if (resultInitializeBdd == true)
     {
+        resultConnectBdd = bdd.connectBdd(host, login, password, Bdd);
+
+        if (resultConnectBdd == true)
+        {
+            cout << "Connexion à la BDD OK !" << endl;
+            resultQuery = bdd.query(request.c_str());
+
+            if (resultQuery == true)
+            {
+                cout << "Insertion en base OK" << endl;
+                bdd.closeBdd();
+            }
+            else
+            {
+                cout << "Pas réussi à insert en base" << endl;
+            }
+        }
+        else
+        {
+            cout << "Pas réussi à connecter à la BDD" << endl;
+        }
+    }
+    else
+    {
+        cout << "Pas réussi à allouer la mémoire pour Mysql" << endl;
+    }
+
+    if (etatWaterLevel == 0)
+    {   
         waterLevel1 = 0;
         waterLevel2 = 0;
+        cout << "On utilise l'eau courante" << endl;
+        actionneurs.SetReseauEauCourante();
+        eau = 0;
     }
+    else if (temperature < 2)
+    {
+        cout << "On utilise l'eau courante" << endl;
+        actionneurs.SetReseauEauCourante();
+        eau = 0;
+    }
+
     else if (etatWaterLevel == 1)
     {
         waterLevel1 = 1;
         waterLevel2 = 0;
+        if (temperature > 2)
+        {
+            cout << "On active la pompe" << endl;
+            actionneurs.SetPumpON();
+            pompe = 1;
+        }
+
     }
+
     else if (etatWaterLevel == 2)
-    {
+    {   
         waterLevel1 = 0;
         waterLevel2 = 1;
+        actionneurs.SetPumpOFF();
+        pompe = 0;
+
+        if (temperature > 2)
+        {
+        cout << "on utilise l'eau de pluie" << endl;
+        actionneurs.SetReseauEauPluie();
+        eau = 1;
+        }
+        
     }
     else if (etatWaterLevel == 3)
     {
         waterLevel1 = 1;
         waterLevel2 = 1;
-    }
-    if (temperature < 2)
-    { //On verifie la temperature pour eviter que l'eau soit gelé (temp > 1 au minimum)
-        cout << "La temperature est trop basse \n";
-    }
-    else if (waterLevel2 == 0)
-    { //On verifie si la cuve de pluie(haut) est déja remplie ou non(0 = Vide, 1 = remplie)
+        actionneurs.SetPumpOFF();
 
-        cout << "Pas assez d'eau dans la cuve de pluie (haut) \n";
-        cout << "On verifie la pompe \n";
-
-        if (temperature < 2)
-        { //On verifie la temperature pour eviter que l'eau soit gelé (temp > 1 au minimum)
-            cout << "La temperature est trop basse pour utiliser la pompe donc on utilise l'eau courante \n";
-        }
-        else if (waterLevel1 == 0)
-        { //On verifie si la cuve de pluie(bas) est remplie (0 = Vide, 1 = remplie)
-            cout << "Impossible d'utiliser la pompe car niveau de pluie trop bas (cuve bas) \n";
-        }
-
-        else if (temperature >= 2 && waterLevel1 == 1 && waterLevel2 == 0)
+        if (temperature > 2)
         {
-
-            cout << " On peut activer la pompe \n";
-
-            if (waterLevel2 == 0)
-            {
-                //On laisse la pompe active tant que le niveau d'eau n'est pas suffisant
-                //On l'arrete au moment ou le Waterlvl3 arrive a 1
-                cout << "on laisse la pompe active \n";
-                pompe = 1;
-            }
-            else if (waterLevel2 == 1)
-            {
-                cout << "Le niveau d'eau max a ete atteinds \n";
-                cout << "on eteinds la pompe \n";
-                pompe = 0;
-            }
-        }
-    }
-    if (temperature >= 2 && waterLevel2 == 1)
-    { //On verifie si la cuve de pluie(haut) est déja remplie (0 = Vide, 1 = remplie)
-        cout << "Le système est sur le réseau eau de pluie \n";
-        actionneurs.SetValueElectrovanne1OFF();
-        eau = 0;
-    }
-
-    if (temperature <= 1 || waterLevel2 == 0)
-    {
-       cout << "Le système est sur le réseau eau courante \n";
-        actionneurs.SetValueElectrovanne1ON();
+        cout << "on utilise l'eau de pluie" << endl;
+        actionneurs.SetReseauEauPluie();
+        pompe = 0;
         eau = 1;
+        }
+        
     }
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
-    cache->saveValueInCache(temperature, waterLevel1,  waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
+    cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
 }
 
 void clientSession(TCPServeur tcpServeur, tempMemory cache)
@@ -192,17 +237,17 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
     else
     {
         cout << "Pas réussi à lire la chaine" << endl;
-    } 
+    }
 }
 
-void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
+void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, BDD bdd)
 {
     srand(time(NULL));
     do
     {
-        cout << "Mise à jour du cache ..." << endl;
         synchro.lock();
-        getRandomValues(cache, capteurs, actionneurs);
+        cout << "Mise à jour du cache ..." << endl;
+        getSystemData(cache, capteurs, actionneurs, bdd);
         cout << "Temperature : " << cache->systemData.temperatureValue << endl;
         cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
         cout << "niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
@@ -213,7 +258,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;
         synchro.unlock();
         // Mettre une attente de 1 minute.
-        this_thread::sleep_for(chrono::seconds(60));
+        this_thread::sleep_for(chrono::seconds(10));
     } while (true);
 }
 
@@ -230,14 +275,8 @@ int main()
     bool resultBindServer;
     bool resultAcceptCom;
     bool etat = false;
-    bool resultInitializeBdd;
-    bool resultConnectBdd;
-    const char *host = "192.168.65.54";
-    const char *login = "root";
-    const char *password = "root";
-    const char *bdd = "Serre";
     TCPServeur tcpServeur;
-    BDD Bdd;
+    BDD bdd;
     myServerEventListener myEventListener;
     tempMemory cache;
     Capteurs capteurs("192.168.65.120", 502);
@@ -247,27 +286,8 @@ int main()
 
     if (!erreur)
     {
-        thread updateCacheThread(updateCache, &cache, capteurs, actionneurs);
+        thread updateCacheThread(updateCache, &cache, capteurs, actionneurs, bdd);
         updateCacheThread.detach();
-        resultInitializeBdd = Bdd.initializeBdd();
-
-       if (resultInitializeBdd == true)
-        {
-            resultConnectBdd = Bdd.connectBdd(host, login, password, bdd);
-
-            if (resultConnectBdd == true)
-            {
-                cout << "Connexion à la BDD OK !" << endl;
-            }
-            else
-            {
-                cout << "Pas réussi à connecter à la BDD" << endl;
-            }
-        }
-        else
-        {
-            cout << "Pas réussi à allouer la mémoire pour Mysql" << endl;
-        }
         resultCreateSocket = tcpServeur.createSocket();
 
         if (resultCreateSocket == true)
