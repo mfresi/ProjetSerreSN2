@@ -104,12 +104,12 @@ int TCPServeur::readBuffer()
         }
          else if (bufferClient[0] == 'w' && bufferClient[1] == 'a' && bufferClient[2] == 't' && bufferClient[3] == 'e' && bufferClient[4] == 'r')
         {
-            cout << "le client demande la consommation electrique" << endl;
+            cout << "le client demande l'etat du réseau d'eau" << endl;
             return 7;
         }
          else if (bufferClient[0] == 'e' && bufferClient[1] == 'l' && bufferClient[2] == 'e' && bufferClient[3] == 'c')
         {
-            cout << "le client demande l'etat du réseau d'eau" << endl;
+            cout << "le client demande la consommation electrique" << endl;
             return 8;
         }
         else
