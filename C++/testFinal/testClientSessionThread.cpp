@@ -1,9 +1,10 @@
 // Programme de test pour le thread clientSession qui permet une connexion au serveur TCP avec plusieurs client en multiThread.
 // Dev by Mattei Fresi
 
-// command to compile file -> g++ testClientSessionThread.cpp ../class/TCPServeur.cpp -o threadClient -lpthread 
+// command to compile file -> g++ testClientSessionThread.cpp ../class/TCPServeur.cpp ../class/tempMemory.cpp -o clientThread -lpthread 
 
 #include "../class/TCPServeur.h"
+#include "../class/tempMemory.h"
 
 using namespace std;
 
@@ -16,42 +17,71 @@ public:
     };
 };
 
-void clientSession(TCPServeur tcpServeur)
+void clientSession(TCPServeur tcpServeur, tempMemory cache)
 {
     int resultReadBuffer;
     bool resultWriteToClient;
+    bool resultRequest;
+    bool resultCloseBdd;
+    string temperature;
+    string waterLevel1;
+    string waterLevel2;
+    string waterLevel3;
+    string pompe;
+    string eau;
+    string waterConso;
+    string electricalConso;
+
+    temperature = to_string((float)cache.systemData.temperatureValue);
+    waterLevel1 = to_string(cache.systemData.waterLevelValue1);
+    waterLevel2 = to_string(cache.systemData.waterLevelValue2);
+    waterLevel3 = to_string(cache.systemData.waterLevelValue3);
+    waterConso = to_string(cache.systemData.waterConsommationValue);
+    electricalConso = to_string(cache.systemData.electricalConsommationValue);
+    pompe = to_string(cache.systemData.pompe);
+    eau = to_string(cache.systemData.eau);
 
     resultReadBuffer = tcpServeur.readBuffer();
     if (resultReadBuffer != -1)
     {
         if (resultReadBuffer == 4)
         {
-            resultWriteToClient = tcpServeur.sendBufferToClient("Temperature : 18 °C");
+            resultWriteToClient = tcpServeur.sendBufferToClient(temperature.c_str());
         }
         else if (resultReadBuffer == 1)
         {
-            resultWriteToClient = tcpServeur.sendBufferToClient("Niveau d'eau 1 : bas");
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterLevel1.c_str());
         }
         else if (resultReadBuffer == 2)
         {
-            resultWriteToClient = tcpServeur.sendBufferToClient("Niveau d'eau 2 : haut");
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterLevel2.c_str());
         }
         else if (resultReadBuffer == 3)
         {
-            resultWriteToClient = tcpServeur.sendBufferToClient("Niveau d'eau 3 : bas");
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterLevel3.c_str());
         }
         else if (resultReadBuffer == 5)
         {
-            resultWriteToClient = tcpServeur.sendBufferToClient("Pompe : en fonction");
+            resultWriteToClient = tcpServeur.sendBufferToClient(pompe.c_str());
         }
         else if (resultReadBuffer == 6)
         {
-            resultWriteToClient = tcpServeur.sendBufferToClient("reseau eau : pluie");
+            resultWriteToClient = tcpServeur.sendBufferToClient(eau.c_str());
+        }
+        else if (resultReadBuffer == 7)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(waterConso.c_str());
+        }
+        else if (resultReadBuffer == 8)
+        {
+            resultWriteToClient = tcpServeur.sendBufferToClient(electricalConso.c_str());
         }
         else if (resultReadBuffer == 0)
         {
             resultWriteToClient = tcpServeur.sendBufferToClient("Ce capteur n'existe pas");
         }
+
+        tcpServeur.closeSocketClient();
 
         if (resultWriteToClient == true)
         {
@@ -83,6 +113,7 @@ int main()
     bool etat = false;
     TCPServeur tcpServeur;
     myServerEventListener myEventListener;
+    tempMemory cache;
 
     tcpServeur.addListener(&myEventListener);
 
@@ -102,7 +133,7 @@ int main()
 
                     if (resultAcceptCom == true)
                     {
-                        thread clientThread(clientSession, tcpServeur);
+                        thread clientThread(clientSession, tcpServeur, cache);
                         clientThread.detach();
                     }
                     else

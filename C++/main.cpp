@@ -1,10 +1,10 @@
 // ServerTCP avec multiClient qui gère la liaison entre le modbus et le site, écoute sur le port 9012.
 // Dev by Mattei FRESI.
-// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/BDD.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp class/Actionneurs.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) -lpthread && ./output
-// compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/SystemData.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output -lpthread && ./output
+// command to compile file -> g++ main.cpp class/TCPServeur.cpp class/tempMemory.cpp class/BDD.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp class/Actionneurs.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) -lpthread && ./output
+// compile without mysql lib -> g++ main.cpp class/TCPServeur.cpp class/tempMemory.cpp class/Capteurs.cpp class/ModBusTCPClient.cpp -o output -lpthread && ./output
 
 #include "class/TCPServeur.h"
-#include "class/SystemData.h"
+#include "class/tempMemory.h"
 #include "class/Capteurs.h"
 #include "class/BDD.h"
 #include "class/Actionneurs.h"
@@ -26,7 +26,7 @@ public:
 std::mutex synchro;
 
 void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, BDD bdd)
-{
+{  
     // date / heure actuelle basée sur le système actuel
     time_t actuel = time(0);
     tm *ltm = localtime(&actuel);
@@ -45,6 +45,8 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     bool eau;
     int ElectricalConso = rand() % 30;
     bool waterLevel3 = 0;
+    int consoEauCourante;
+    int consoEauPluie;
     const char *host = "192.168.65.54";
     const char *login = "root";
     const char *password = "root";
@@ -59,8 +61,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     electricalConso = to_string(ElectricalConso);
     waterconso = to_string(waterConso);
     heure = to_string(heures);
-    cout << "Heure : " << heures << endl;
-    string request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) VALUES (" + waterconso + " , " + waterconso + ", " + electricalConso + ", '2021-05-31', " + heure + ");";
+    string request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) VALUES (" + waterconso + " , " + waterconso + ", " + electricalConso + ", '" + date + "', '" + heure + "');";
     string requestToArchive = "INSERT INTO `archives`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) SELECT `eau_pluie`, `eau_courante`, `electrique`, `date`, `heure` FROM `consommation`;";
     string purgeRequest = "TRUNCATE TABLE `consommation`;";
     bool resultInitializeBdd;
@@ -92,7 +93,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
             if (heures == 00)
             {
                 resultQueryArchivage = bdd.query(requestToArchive.c_str());
-                
+
                 if (resultQueryArchivage == true)
                 {
                     cout << "Archivage OK" << endl;
@@ -105,7 +106,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
                     }
                     else
                     {
-                        cout << "Pas réussi à purge" << endl;
+                        cout << "Pas réussi à purger" << endl;
                     }
                 }
                 else
@@ -135,7 +136,8 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         cout << "On utilise l'eau courante" << endl;
         if (pompe != 1)
         {
-             actionneurs.SetReseauEauCourante();
+            actionneurs.SetReseauEauCourante();
+            pompe = 0;
         }
         eau = 0;
     }
@@ -144,18 +146,17 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         cout << "On utilise l'eau courante" << endl;
         actionneurs.SetReseauEauCourante();
         eau = 0;
+        pompe = 0;
     }
 
     else if (etatWaterLevel == 1)
     {
         waterLevel1 = 1;
         waterLevel2 = 0;
-        if (temperature > 2)
-        {
-            cout << "On active la pompe" << endl;
-            actionneurs.SetPumpON();
-            pompe = 1;
-        }
+
+        cout << "On active la pompe" << endl;
+        actionneurs.SetPumpON();
+        pompe = 1;
     }
 
     else if (etatWaterLevel == 2)
@@ -165,13 +166,9 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         actionneurs.SetPumpOFF();
         //usleep(1500);
         pompe = 0;
-
-        if (temperature > 2)
-        {
-            cout << "on utilise l'eau de pluie" << endl;
-            actionneurs.SetReseauEauPluie();
-            eau = 1;
-        }
+        cout << "on utilise l'eau de pluie" << endl;
+        actionneurs.SetReseauEauPluie();
+        eau = 1;
     }
     else if (etatWaterLevel == 3)
     {
@@ -179,17 +176,22 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         waterLevel2 = 1;
         actionneurs.SetPumpOFF();
         //usleep(1500);
+        cout << "on utilise l'eau de pluie" << endl;
+        actionneurs.SetReseauEauPluie();
+        pompe = 0;
+        eau = 1;
+    }
 
-        if (temperature > 2)
-        {
-            cout << "on utilise l'eau de pluie" << endl;
-            actionneurs.SetReseauEauPluie();
-            pompe = 0;
-            eau = 1;
-        }
+    if (eau == 1)
+    {   
+        consoEauPluie = waterConso;
+    }
+    else if (eau == 0)
+    {
+        consoEauCourante = waterConso;
     }
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
-    cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
+    cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau, consoEauCourante, consoEauPluie);
 }
 
 void clientSession(TCPServeur tcpServeur, tempMemory cache)
@@ -282,16 +284,19 @@ void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, 
     do
     {
         synchro.lock();
+        cout << "-----------------------------------------------------" << endl;
         cout << "Mise à jour du cache ..." << endl;
         getSystemData(cache, capteurs, actionneurs, bdd);
         cout << "Temperature : " << cache->systemData.temperatureValue << endl;
-        cout << "niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
-        cout << "niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
-        cout << "niveau d'eau 3 : " << cache->systemData.waterLevelValue3 << endl;
-        cout << "consommation eau : " << cache->systemData.waterConsommationValue << endl;
-        cout << "consommation electrique : " << cache->systemData.electricalConsommationValue << endl;
+        cout << "Niveau d'eau 1 : " << cache->systemData.waterLevelValue1 << endl;
+        cout << "Niveau d'eau 2 : " << cache->systemData.waterLevelValue2 << endl;
+        cout << "Niveau d'eau 3 : " << cache->systemData.waterLevelValue3 << endl;
+        cout << "Consommation eau : " << cache->systemData.waterConsommationValue << endl;
+        cout << "Consommation electrique : " << cache->systemData.electricalConsommationValue << endl;
         cout << "Etat de la pompe : " << cache->systemData.pompe << endl;
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;
+        cout << "Consommation eau courante : " << cache->systemData.consoEauCourante << endl;
+        cout << "Consommation eau pluie : " << cache->systemData.consoEauPluie << endl;
         synchro.unlock();
         // Mettre une attente de 1 minute.
         this_thread::sleep_for(chrono::seconds(10));

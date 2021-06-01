@@ -1,7 +1,7 @@
 // Programme de test pour la classe BDD.
 // Deb by Mattei Fresi
 
-// Commande pour compiler -> g++ testBdd.cpp ../class/BDD.cpp -o output -L/usr/include/mariadb/mysql -lmariadbclient && ./output
+// Commande pour compiler -> g++ testBdd.cpp ../class/BDD.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) && ./output
 
 // include de la classe BDD.
 #include "../class/BDD.h"
@@ -11,11 +11,11 @@ using namespace std;
 int main()
 {
     //Initialisation des variables pour la connexion à la base de données et la requete.
-    const char * request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`) VALUES (12, 45, 20);";
-    const char *host = "mysql-projetu.alwaysdata.net";
-    const char *login = "231030ei";
-    const char *password = "37pgmh55";
-    const char *bdd = "projet-serreau";
+    const char * request = "INSERT INTO `consommation`(`eau_pluie`, `eau_courante`, `electrique`, `date`, `heure`) VALUES ('22','4','28','2021-06-01','11');";
+    const char *host = "192.168.65.54";
+    const char *login = "root";
+    const char *password = "root";
+    const char *bdd = "Serre";
     bool resultInitialize;
     bool resultConnexion;
     bool resultQuery;

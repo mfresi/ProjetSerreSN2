@@ -7,6 +7,7 @@ Actionneurs::Actionneurs(const char * addr, int port)
     clientActionneurs.createSocket();
     clientActionneurs.connectSocket(addr, port);
 }
+
 int Actionneurs::SetReseauEauPluie()
 {
  

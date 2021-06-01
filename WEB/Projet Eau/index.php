@@ -336,7 +336,7 @@ $conso = new capteurs;
     var ctx = document.getElementById('myChart');
     var chart = new Chart(ctx, {
         // Le type de graphique
-        type: 'bar',
+        type: 'line',
         // Les données
         data: {
             labels: [<?php echo $conso->getHour(); ?>],

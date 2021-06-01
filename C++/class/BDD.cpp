@@ -2,7 +2,7 @@
 
 bool BDD::initializeBdd()
 {
-    bool resultMysql_init;
+    MYSQL * resultMysql_init;
 
     resultMysql_init = mysql_init(&mysql);
 
@@ -17,7 +17,7 @@ bool BDD::initializeBdd()
 }
 bool BDD::connectBdd(const char *host, const char *login, const char *password, const char *bdd)
 {
-    bool resultConnexionToBdd;
+    MYSQL * resultConnexionToBdd;
 
     resultConnexionToBdd = mysql_real_connect(&mysql, host, login, password, bdd, 0, NULL, 0);
 

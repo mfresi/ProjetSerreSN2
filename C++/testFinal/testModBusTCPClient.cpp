@@ -18,7 +18,6 @@ int main()
         if (resultConnexionToCard == true)
         {
             cout << "Connexion à la carte réussi" << endl;
-            //Trame pour temperature : 00 01 00 00 00 06 01 04 00 63 00 02.
             int resultgetTemperature = modbus.sendBuffer(0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01, 0x04, 0x00, 0x63, 0x00, 0x02);
 
             if (resultgetTemperature == true)
