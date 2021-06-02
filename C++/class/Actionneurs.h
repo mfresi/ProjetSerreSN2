@@ -1,3 +1,5 @@
+//Déclaration de la classe Actionneurs.
+// Dev by Pilex.
 #ifndef ACTIONNEURS_H
 #define ACTIONNEURS_H
 #include <sys/types.h>

@@ -1,3 +1,5 @@
+// Déclaration de la classe BDD.
+// Dev by Fresi.
 #include <iostream>
 #include <mysql.h>
 #include <cstring>

@@ -1,13 +1,13 @@
+// Implémentation des méthodes de la classe Actionneurs.
 #include "Actionneurs.h"
-
-
-
+// Constructeur de la classe Actionneurs qui permet la connexion à la carte E/S.
 Actionneurs::Actionneurs(const char * addr, int port)
 {   
     clientActionneurs.createSocket();
     clientActionneurs.connectSocket(addr, port);
 }
-
+// Méthode SetReseauEauPluie qui permet d'activer l'électrovanne sur le réseau d'eau de pluie.
+// Return 1 en cas de succès et false en cas d'echec.
 int Actionneurs::SetReseauEauPluie()
 {
  
@@ -22,7 +22,8 @@ int Actionneurs::SetReseauEauPluie()
         return false;
     }
 }
-
+// Méthode SetReseauEauCourante qui permet d'activer l'électrovanne sur le réseau d'eau courante.
+// Return 2 en cas de succès et false en cas d'echec.
 int Actionneurs::SetReseauEauCourante()
 {
     
@@ -37,7 +38,8 @@ int Actionneurs::SetReseauEauCourante()
         return false;
     }
 }
-
+// Méthode SetPumpOn qui envoie la trame à la carte E/S pour activer la pompe.
+// Return 1 en cas de succès et false en cas d'echec.
 int Actionneurs::SetPumpON()
 {
  
@@ -52,7 +54,8 @@ int Actionneurs::SetPumpON()
         return false;
     }
 }
-
+// Méthode SetPimpOFF qui envoie la trame à la carte E/S pour désactiver la pompe.
+// Return 1 en cas de succès et false en cas d'echec.
 int Actionneurs::SetPumpOFF()
 {
  

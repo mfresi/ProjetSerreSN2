@@ -24,7 +24,9 @@ public:
 };
 
 std::mutex synchro;
-
+// Méthode getSystemData qui récupère les valeurs des capteurs et actionneurs pour mettre à jour le cache.
+// Prend en paramètre un objet cache de type tempMemory*, un objet capteurs de type Capteurs, 
+//un objet actionneurs de type Actionneurs et un objet bdd de type BDD.
 void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, BDD bdd)
 {  
     // date / heure actuelle basée sur le système actuel
@@ -36,6 +38,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     int jour = ltm->tm_mday;
     int heures = ltm->tm_hour;
     int minutes = ltm->tm_min;
+    // On récupère les valeurs des capteurs grâce à la classe capteurs.
     float temperature = capteurs.getTemperature();
     int etatWaterLevel = capteurs.getNiveauEau();
     int waterConso = capteurs.getWaterconsommation();
@@ -70,15 +73,18 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     bool resultQueryArchivage;
     bool resultPurge;
 
+    // Allouage de la mémoire de l'objet Mysql.
     resultInitializeBdd = bdd.initializeBdd();
 
     if (resultInitializeBdd == true)
     {
+        // Connexion à la base de donéées.
         resultConnectBdd = bdd.connectBdd(host, login, password, Bdd);
 
         if (resultConnectBdd == true)
         {
             cout << "Connexion à la BDD OK !" << endl;
+            // Méthode query pour envoyer nos requêtes.
             resultQuery = bdd.query(request.c_str());
 
             if (resultQuery == true)
@@ -129,6 +135,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         cout << "Pas réussi à allouer la mémoire pour Mysql" << endl;
     }
 
+    // Algorithme pour gérer les actionneurs.
     if (etatWaterLevel == 0)
     {
         waterLevel1 = 0;
@@ -190,10 +197,10 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     {
         consoEauCourante = waterConso;
     }
-    // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
+    // Met à jour la valeur du cache SystemData avec les valeurs des capteurs et actionneurs.
     cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau, consoEauCourante, consoEauPluie);
 }
-
+// Méthode pour le threadClient qui gère les clients pour communiquer avec l'interface Web.
 void clientSession(TCPServeur tcpServeur, tempMemory cache)
 {
     int resultReadBuffer;
@@ -277,7 +284,7 @@ void clientSession(TCPServeur tcpServeur, tempMemory cache)
         cout << "Pas réussi à lire la chaine" << endl;
     }
 }
-
+// Méthode updateCache pour le thread updateCache qui met à jour l'objet SystemData toutes les minutes.
 void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, BDD bdd)
 {
     srand(time(NULL));
@@ -327,22 +334,26 @@ int main()
 
     if (!erreur)
     {
+        // Déclaration du thread pour la mise à jour de l'objet SystemData.
         thread updateCacheThread(updateCache, &cache, capteurs, actionneurs, bdd);
         updateCacheThread.detach();
         resultCreateSocket = tcpServeur.createSocket();
 
         if (resultCreateSocket == true)
         {
+            // On bind le serveur TCP sur le port 9012.
             resultBindServer = tcpServeur.connectServer(9012);
 
             if (resultBindServer == true)
             {
                 do
                 {
+                    // Le serveur TCP ecoute sur le port 9012 et attend un client.
                     resultAcceptCom = tcpServeur.acceptCom();
 
                     if (resultAcceptCom == true)
                     {
+                        // Déclaration du thread pour la communication avec l'interface Web.
                         thread clientThread(clientSession, tcpServeur, cache);
                         clientThread.detach();
                     }

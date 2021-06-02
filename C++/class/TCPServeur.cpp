@@ -1,3 +1,4 @@
+// Implémenation des méthodes de la classe TCPServeur.
 #include "TCPServeur.h"
 
 using namespace std;
@@ -5,6 +6,8 @@ using namespace std;
 TCPServeur::TCPServeur()
 {
 }
+// Permet de créer le socket pour la connexion TCP.
+// Return true en cas de succès et false en cas d'echec.
 bool TCPServeur::createSocket()
 {
     int opt = TRUE;
@@ -20,6 +23,8 @@ bool TCPServeur::createSocket()
         return false;
     }
 }
+// Permet de bind le serveur TCP sur un port.
+// Return true en cas de succès et false en cas d'echec.
 bool TCPServeur::connectServer(int port)
 {
     int resultBindServer;
@@ -41,6 +46,8 @@ bool TCPServeur::connectServer(int port)
         return false;
     }
 }
+// Le serveur attend une connexion client.
+// Return true en cas de succès et false en cas d'echec.
 bool TCPServeur::acceptCom()
 {
     // Le serveur accepte la communication avec la machine source
@@ -48,6 +55,7 @@ bool TCPServeur::acceptCom()
 
     if (this->csock != -1)
     {
+        // Mise en place de l'event pour notifier le serveur d'une connexion client immédiate.
         notifyClientConnected(csock, csin, csin);
         return true;
     }
@@ -56,6 +64,8 @@ bool TCPServeur::acceptCom()
         return false;
     }
 }
+// Permet de traiter le protocole instauré par les étudiants 1 et 2 entre le serveur TCP et l'interface Web.
+// Return un int en cas de succès et -1 en cas d'echec.
 int TCPServeur::readBuffer()
 {
     char bufferClient[50] = {0};
@@ -118,6 +128,8 @@ int TCPServeur::readBuffer()
         }
     }
 }
+// Permet d'envoyer des informations à l'interface Web.
+// Return true en cas de succès et false en cas d'echec.
 bool TCPServeur::sendBufferToClient(const char *bufferSendToClient)
 {
     int resultWriteBuffer;
@@ -131,6 +143,8 @@ bool TCPServeur::sendBufferToClient(const char *bufferSendToClient)
     }
     return false;
 }
+// Permet de fermer la connexion client.
+// Return true en cas de succès et false en cas d'echec.
 bool TCPServeur::closeSocketClient()
 {
     int resultCloseCSock;
@@ -146,7 +160,8 @@ bool TCPServeur::closeSocketClient()
         return false;
     }
 }
-
+// Permet de fermer la connexion sur serveur TCP.
+// Return true en cas de succès et false en cas d'echec.
 bool TCPServeur::closeListenSocket()
 {
     int resultCloseSocket;
@@ -162,12 +177,12 @@ bool TCPServeur::closeListenSocket()
         return false;
     }
 }
-
+// Permet d'ajouter des events.
 void TCPServeur::addListener(TCPServerEventListener *l)
 {
     listeners.push_back(l);
 }
-
+// Permet de notifier le serveur quand un client se connecte au serveur TCP.
 void TCPServeur::notifyClientConnected(SOCKET csock, SOCKADDR_IN csinIp, SOCKADDR_IN csinPort)
 {
     for (int i = 0; i < listeners.size(); i++)
