@@ -14,6 +14,7 @@
 
 using namespace std;
 
+
 class myServerEventListener : public TCPServerEventListener
 {
 public:
@@ -24,7 +25,6 @@ public:
 };
 
 std::mutex synchro;
-
 void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, BDD bdd)
 {  
     // date / heure actuelle basée sur le système actuel
@@ -90,7 +90,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
                 cout << "Pas réussi à insert en base" << endl;
             }
 
-            if (heures == 00)
+            if (heures == 0)
             {
                 resultQueryArchivage = bdd.query(requestToArchive.c_str());
 
@@ -133,13 +133,17 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     {
         waterLevel1 = 0;
         waterLevel2 = 0;
+
         cout << "On utilise l'eau courante" << endl;
-        if (pompe != 1)
+        if (pompe == 1)
         {
             actionneurs.SetReseauEauCourante();
+            actionneurs.SetPumpOFF();
             pompe = 0;
         }
+
         eau = 0;
+
     }
     else if (temperature < 2)
     {
@@ -182,14 +186,29 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         eau = 1;
     }
 
+int addValue;
+int memoire;
+int memoire2;
+
+    if(addValue != 1)
+    {   consoEauPluie = 0;
+        consoEauCourante = 0;
+        memoire = cache->systemData.waterConsommationValue;
+        addValue = 1;
+        cout << "Add value : " << addValue << endl;
+    }
+
     if (eau == 1)
-    {   
-        consoEauPluie = waterConso;
+    {   consoEauPluie = waterConso - memoire;
+        cout << "Memoire" << memoire << endl;
     }
-    else if (eau == 0)
-    {
-        consoEauCourante = waterConso;
+
+    if(eau == 0)
+    {   consoEauCourante = waterConso - memoire;
+        cout << "Memoire" << memoire << endl;
+         
     }
+
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
     cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau, consoEauCourante, consoEauPluie);
 }

@@ -66,5 +66,5 @@ int main()
         cout << "Pas réussi à insérer en BDD" << endl;
     }
     
-    Bdd.closeBdd();
+
 }

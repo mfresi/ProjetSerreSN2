@@ -8,16 +8,6 @@
 #include "../class/Capteurs.h"
 #include "../class/Actionneurs.h"
 
-
-class myServerEventListener : public TCPServerEventListener
-{
-public:
-    virtual void onClientConnected(SOCKET csock, SOCKADDR_IN csinIp, SOCKADDR_IN csinPort)
-    {
-        cout << "Un client se connecte avec la socket " << csock << " avec l'ip " << inet_ntoa(csinIp.sin_addr) << " sur le port " << htons(csinPort.sin_port) << endl;
-    };
-};
-
 void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
 {
     float temperature = capteurs.getTemperature();
@@ -29,15 +19,19 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     bool eau;
     int ElectricalConso = rand() % 30;
     bool waterLevel3 = 0;
+    int eauCourante = 0;
+    int eauPluie = 0;
 
     if (etatWaterLevel == 0)
     {
         waterLevel1 = 0;
         waterLevel2 = 0;
         cout << "On utilise l'eau courante" << endl;
-        if (pompe != 1)
+        if (pompe == 1)
         {
              actionneurs.SetReseauEauCourante();
+             actionneurs.SetPumpOFF();
+             pompe = 0;
         }
         eau = 0;
     }
@@ -84,7 +78,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
             eau = 1;
     }
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
-    cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau);
+    cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau, eauCourante, eauPluie);
 }
 
 void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
@@ -124,12 +118,9 @@ int main()
     bool resultAcceptCom;
     bool etat = false;
     TCPServeur tcpServeur;
-    myServerEventListener myEventListener;
     tempMemory cache;
     Capteurs capteurs("192.168.65.120", 502);
     Actionneurs actionneurs("192.168.65.120", 502);
-
-    tcpServeur.addListener(&myEventListener);
 
     if (!erreur)
     {
@@ -150,7 +141,6 @@ int main()
 
                     if (resultAcceptCom == true)
                     {
-                        cout << "Un client s'est connecté" << endl;
                     }
                     else
                     {

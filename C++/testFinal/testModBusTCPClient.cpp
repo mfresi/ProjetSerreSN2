@@ -51,18 +51,24 @@ int main()
                 else if (waterLevel == 0)
                 {
                     //Les deux capteurs à 0
+                    cout << "les deux capteurs de niveau d'eau sont à l'etat 0" << endl;
                 }
                 else if (waterLevel == 1)
                 {
-                    //Le capeur métal est 0 et plastique 1
+                    //Le capeur métal est 1 et plastique 0
+                    cout << "Capteur de la cuve de récupération d'eau de pluie est à 1" << endl;
+                    cout << "Capteur cuve d'alimentation du système est à 0" << endl;
                 }
                 else if (waterLevel == 2)
                 {
-                    //Le capteur metal est 1 et plastique 0
+                    //Le capteur metal est 0 et plastique 1
+                    cout << "Capteur de la cuve de récupération d'eau de pluie est à 0" << endl;
+                   cout << "Capteur cuve d'alimentation du système est à 1" << endl;
                 }
                 else if (waterLevel == 3)
                 {
                     //Les deux capteurs à 1
+                    cout << "les deux capteurs de niveau d'eau sont à l'etat 1" << endl;
                 }
             }
             else

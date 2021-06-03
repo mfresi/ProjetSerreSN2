@@ -1,116 +1,92 @@
-//Pour compiler : g++ -g ModuleTestActionneurs.cpp ../class/ModBusTCPClient.cpp ../class/Actionneurs.cpp -o TestActionneurs
+//Pour compiler : g++ -g ModuleTestActionneurs.cpp ../class/ModBusTCPClient.cpp ../class/Actionneurs.cpp ../class/Capteurs.cpp -o TestActionneurs
 #include <iostream>
 #include "../class/Actionneurs.h"
 #include "../class/Capteurs.h"
-
-#define SEND_DELAY 1500
 
 using namespace std;
 int main()
 {
     //ModBusTCPClient test;
-    Actionneurs Actionneurs("192.168.65.120",502);
-    Capteurs capteurs("192.168.65.120",502);
+    Actionneurs Actionneurs("192.168.65.120", 502);
+    Capteurs capteurs("192.168.65.120", 502);
     bool test = false;
 
-    while(1)
+    while (1)
     {
-        if(test)
+        if (test)
         {
             Actionneurs.SetPumpON();
-            usleep(SEND_DELAY);
             Actionneurs.SetReseauEauPluie();
+            cout << "on utilise l'eau de pluie et on allume la pompe" << endl;
         }
         else
         {
             Actionneurs.SetPumpOFF();
-            usleep(SEND_DELAY);
             Actionneurs.SetReseauEauCourante();
+            cout << "on utilise l'eau courante et on éteint la pompe" << endl;
         }
         test = !test;
         sleep(1);
     }
-    
-   int waterconso = capteurs.getWaterconsommation();
 
-
-       if (etatWaterLevel == 0)
+    int waterconso = capteurs.getWaterconsommation();
+    int etatWaterLevel = capteurs.getNiveauEau();
+    float temperature = capteurs.getTemperature();
+    int waterLevel1;
+    int waterLevel2;
+    int eau;
+    int pompe;
+/*
+    if (etatWaterLevel == 0)
     {
         waterLevel1 = 0;
         waterLevel2 = 0;
         cout << "On utilise l'eau courante" << endl;
         if (pompe != 1)
         {
-             actionneurs.SetReseauEauCourante();
+            Actionneurs.SetReseauEauCourante();
         }
         eau = 0;
-
-      /*  if (consoEauCourante != consoEauCourante)
-            {
-                consoEauCourante += waterConso - consoEauCourante;
-            }
-            else {
-                 consoEauCourante = consoEauCourante;
-            } */
     }
     else if (temperature < 2)
     {
         cout << "On utilise l'eau courante" << endl;
-        actionneurs.SetReseauEauCourante();
+        Actionneurs.SetReseauEauCourante();
         eau = 0;
-         /* if (consoEauCourante != consoEauCourante)
-            {
-                consoEauCourante += waterConso - consoEauCourante;
-            }
-            else {
-                 consoEauCourante = consoEauCourante;
-            } */
     }
 
     else if (etatWaterLevel == 1)
     {
         waterLevel1 = 1;
         waterLevel2 = 0;
-       
-            cout << "On active la pompe" << endl;
-            actionneurs.SetPumpON();
-            pompe = 1;
+
+        cout << "On active la pompe" << endl;
+        Actionneurs.SetPumpON();
+        pompe = 1;
     }
 
     else if (etatWaterLevel == 2)
     {
         waterLevel1 = 0;
         waterLevel2 = 1;
-        actionneurs.SetPumpOFF();
+        Actionneurs.SetPumpOFF();
         //usleep(1500);
         pompe = 0;
-            cout << "on utilise l'eau de pluie" << endl;
-            actionneurs.SetReseauEauPluie();
-            eau = 1;
-             if (consoEauPluie != consoEauPluie)
-            {
-                consoEauPluie += waterConso - consoEauPluie;
-            }
-            else {
-                 consoEauPluie = consoEauPluie;
-            } 
-    
+        cout << "on utilise l'eau de pluie" << endl;
+        Actionneurs.SetReseauEauPluie();
+        eau = 1;
     }
     else if (etatWaterLevel == 3)
     {
         waterLevel1 = 1;
         waterLevel2 = 1;
-        actionneurs.SetPumpOFF();
+        Actionneurs.SetPumpOFF();
         //usleep(1500);
-            cout << "on utilise l'eau de pluie" << endl;
-            actionneurs.SetReseauEauPluie();
-            pompe = 0;
-            eau = 1;
-           // consoEauPluie = ConsoMemoire;
-            ConsoMemoire = waterConso;
-            
-            
-           
-    }
+        cout << "on utilise l'eau de pluie" << endl;
+        Actionneurs.SetReseauEauPluie();
+        pompe = 0;
+        eau = 1;
+        // consoEauPluie = ConsoMemoire;
+       
+    }*/
 }
- 

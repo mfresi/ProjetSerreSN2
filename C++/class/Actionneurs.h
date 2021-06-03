@@ -25,7 +25,6 @@ public :
 	int SetReseauEauPluie();
 	int SetPumpON();
 	int SetPumpOFF();
-
 };
 
 #endif
