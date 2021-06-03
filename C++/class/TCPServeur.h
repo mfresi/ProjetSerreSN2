@@ -1,3 +1,5 @@
+// Implémentation de la classe TCPServeur.
+// Dev by Fresi.
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

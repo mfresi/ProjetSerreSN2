@@ -1,7 +1,8 @@
+// Implémentation des méthodes de la classe Capteurs.
 #include "Capteurs.h"
 #include "ModBusTCPClient.h"
 ModBusTCPClient Client;
-
+// Constructeur qui permet la connexion à la carte E/S.
 Capteurs::Capteurs(const char *addr, int port)
 {
     Client.createSocket();
@@ -11,7 +12,8 @@ Capteurs::Capteurs(const char *addr, int port)
 Capteurs::~Capteurs()
 {
 }
-
+// Méthode qui permet de récupérer la valeur du capteur de température.
+// Return la temperature en cas de succès et false en cas d'echec.
 float Capteurs::getTemperature()
 {
 
@@ -20,6 +22,7 @@ float Capteurs::getTemperature()
 
     if (resultgetTemperature == true)
     {
+        // Méthode qui permet le traitement de la trame de réception pour la valeur du capteur de température.
         float temperature = Client.recvTemperature();
 
         if (temperature)
@@ -36,13 +39,15 @@ float Capteurs::getTemperature()
         return false;
     }
 }
-
+// Méthode qui permet de récupérer l'état des capteurs de niveau d'eau.
+// Return la valeur de l'etat des capteurs de niveau d'eau en cas de succèset -1 en cas d'echec.
 int Capteurs::getNiveauEau()
 {
     int resultgetWaterLevel = Client.sendBuffer(0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01, 0x02, 0x00, 0x63, 0x00, 0x02);
 
     if (resultgetWaterLevel == true)
     {
+        // Méthode qui traite la trame de réception des capteurs de niveau d'eau.
         int waterLevel = Client.recvWaterLevel();
 
         if (waterLevel == 0)
@@ -64,7 +69,8 @@ int Capteurs::getNiveauEau()
     }
         return -1;
 }
-
+// Méthode pour récupérer le nombre d'impulsion du capteur de consommation d'eau.
+// Return la valeur de la consommation électrique en vas de succès et false en cas d'echec.
 float Capteurs::getWaterconsommation()
 {
 

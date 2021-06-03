@@ -72,6 +72,8 @@ bool ModBusTCPClient::sendBuffer(char octet1, char octet2, char octet3, char oct
         return true;
     }
 }
+// Permet le traitement de la trame de réception du capteur de température.
+// Return la valeur de la température en cas de succès et false en cas d'echec.
 float ModBusTCPClient::recvTemperature()
 {
     char bufferRecv[50];
@@ -102,6 +104,8 @@ float ModBusTCPClient::recvTemperature()
         return false;
     }
 }
+// Permet le traitment de la trame pour les capteurs de niveau d'eau.
+// Return l'etat des niveau d'eau en cas de succès et -1 en cas d'echec.
 int ModBusTCPClient::recvWaterLevel()
 {
     char bufferRecv[50];
@@ -120,7 +124,8 @@ int ModBusTCPClient::recvWaterLevel()
         return -1;
     }
 }
-
+// Permet de traiter la trame de reception du capteur de consommation d'eau.
+// Return la consommation d'eau en Litre en cas de succès et false en cas d'echec.
 float ModBusTCPClient::recvWaterConso()
 {
 
@@ -152,7 +157,8 @@ float ModBusTCPClient::recvWaterConso()
         return false;
     }
 }
-
+// Permet de mettre fin à la connexion avec la carte E/S.
+// Return true en cas de succès et false en cas d'echec.
 bool ModBusTCPClient::closeSocket()
 {
     int resultCloseSocket;

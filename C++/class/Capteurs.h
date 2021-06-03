@@ -1,3 +1,5 @@
+// Déclaration de la classe Capteurs.
+// Dev by Fresi.
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
