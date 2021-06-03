@@ -58,12 +58,13 @@ function getNiv1() {
 }
 //Va permettre le refresh auto du niveau bas de la cuve (id de la div, text = les données retourné)
 function UpdateDivNiv1(id, text) {
-    var e = document.getElementById(id).innerHTML = "Le niveau d'eau 1 est à l'état " + text;
-    //Si on ne peut pas afficher
     if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
     } else if (text == '0') {
         var e = document.getElementById(id).innerHTML = "La cuve est a l'état bas";
+    }
+    else if (text == '1') {
+        var e = document.getElementById(id).innerHTML = "La cuve est remplie";
     }
 }
 //Va permettre le refresh auto du niveau haut de la cuve (id de la div, text = les données retourné)
@@ -75,7 +76,7 @@ function UpdateDivNiv2(id, text) {
     } else if (text == "0") {
         var e = document.getElementById(id).innerHTML = "La cuve est a l'état bas";
     } else if (text == "1") {
-        var e = document.getElementById(id).innerHTML = "La cuve est remplie (ne pas pomper)";
+        var e = document.getElementById(id).innerHTML = "La cuve est remplie";
     }
 }
 
@@ -184,21 +185,13 @@ function UpdateWaterFlowStatus(id, text) {
     //Si on ne peut pas afficher
     if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
-    } else if (text == "0") {
-        var e = document.getElementById(id).innerHTML = "La cuve peut etre encore remplie";
     } else if (text == "1") {
-        var e = document.getElementById(id).innerHTML = "La cuve est remplie (ne pas pomper)";
+        var e = document.getElementById(id).innerHTML = "L'eau de pluie est utilisée";
+    } else if (text == "0") {
+        var e = document.getElementById(id).innerHTML = "L'eau courante est utilisée";
     }
 }
 
-
-
-
-
-function addConsoValue() {
-    console.log(chart.data.datasets);
-    this.chart.data.datasets[0].data.push(7, 8);
-}
 
 refreshValuesTime = 2000;
 //On refresh les valeurs des capteurs

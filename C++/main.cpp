@@ -98,7 +98,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
                 cout << "Pas réussi à insert en base" << endl;
             }
 
-            if (heures == 0)
+            if (heures == 00)
             {
                 resultQueryArchivage = bdd.query(requestToArchive.c_str());
 

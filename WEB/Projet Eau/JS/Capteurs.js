@@ -158,9 +158,9 @@ function UpdateWaterFlowStatus(id, text) {
     //Si on ne peut pas afficher
     if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
-    } else if (text == "0") {
-        var e = document.getElementById(id).innerHTML = "L'eau de pluie est utilisée";
     } else if (text == "1") {
+        var e = document.getElementById(id).innerHTML = "L'eau de pluie est utilisée";
+    } else if (text == "0") {
         var e = document.getElementById(id).innerHTML = "L'eau courante est utilisée";
     }
 }

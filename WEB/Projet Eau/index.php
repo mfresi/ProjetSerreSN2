@@ -328,10 +328,6 @@
 
 <?php
 $conso = new capteurs;
-echo $conso->getHour();
-echo $conso->getWaterConsoCourante();
-echo $conso->getWaterConsoPluie();
-echo $conso->getConsoElec();
 
 ?>
 
