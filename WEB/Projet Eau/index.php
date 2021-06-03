@@ -328,6 +328,11 @@
 
 <?php
 $conso = new capteurs;
+echo $conso->getHour();
+echo $conso->getWaterConsoCourante();
+echo $conso->getWaterConsoPluie();
+echo $conso->getConsoElec();
+
 ?>
 
 <script>
@@ -336,7 +341,7 @@ $conso = new capteurs;
     var ctx = document.getElementById('myChart');
     var chart = new Chart(ctx, {
         // Le type de graphique
-        type: 'line',
+        type: 'bar',
         // Les données
         data: {
             labels: [<?php echo $conso->getHour(); ?>],

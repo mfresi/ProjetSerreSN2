@@ -17,9 +17,6 @@
 
 <div>
     <form action ="" method="POST">
-    <input class="button button2" type="submit" name="archiver" value="archiver données">
-    </form>
-    <form action ="" method="POST">
     <input class="button button2" type="submit" name="afficher" value="afficher données">
     </form>
 </div>
