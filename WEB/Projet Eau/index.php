@@ -18,9 +18,7 @@
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <link rel="stylesheet" href="assets/css/magnific-popup.css">
     <link rel="stylesheet" href="assets/css/bootsnav.css">
-
-
-
+    <link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css">
     <!--For Plugins external css-->
     <!--<link rel="stylesheet" href="assets/css/plugins.css" />-->
     <!--Theme custom css -->
@@ -33,19 +31,27 @@
 </head>
 
 <script>
+    function displayJour(id, text) {
+        document.getElementById(id).innerHTML = text;
+    }
+
     function setIntervalGraph() {
         var minGraphValue = document.getElementById("minGraph").value;
         var maxGraphValue = document.getElementById("maxGraph").value;
+        var date = document.getElementById("dateSelected").value;
         var minConvert = parseInt(minGraphValue);
         var maxConvert = parseInt(maxGraphValue);
-        console.log(minConvert);
-        console.log(maxConvert);
+        displayJour("jour", date);
         chart.options.scales.x.min = minConvert;
         chart.options.scales.x.max = maxConvert;
         chart.update();
         console.log("chart mis à jour");
     }
 </script>
+
+<?php
+$conso = new capteurs;
+?>
 
 <body data-spy="scroll" data-target=".navbar-collapse">
 
@@ -88,7 +94,6 @@
                     <a class="navbar-brand" href="#brand">
                         LA PRO SERRE
                     </a>
-
                 </div>
                 <!-- End Header Navigation -->
 
@@ -111,7 +116,7 @@
                     <div class="main_home">
                         <div class="col-md-6">
                             <div class="home_text">
-                                <h1 class="text-white">ProLaSerre</h1>
+                                <h1 class="text-white">La Pro Serre</h1>
                             </div>
 
                             <div class="home_btns m-top-40">
@@ -121,12 +126,12 @@
 
                         <div class="col-md-6">
                             <div class="phone_one phone_attr1 text-center sm-m-top-50">
-
+                                <h1 class="text-white">Prévision météo : </h1>
+                                <iframe id="widget_autocomplete_preview" width="150" height="300" frameborder="0" src="https://meteofrance.com/widget/prevision/800210"> </iframe>
                             </div>
                         </div>
 
                     </div>
-
                 </div>
                 <!--End off row-->
             </div>
@@ -212,8 +217,6 @@
             </div><!-- End off container -->
         </section><!-- End off Featured Section-->
 
-
-
         <section>
             <div class="container">
                 <div class="row">
@@ -231,7 +234,7 @@
                                         <img src="assets/Serre2.jpg">
                                     </div>
                                     <div class="swiper-slide" style="background-color:white; color:rgb(0, 0, 0)" ;>
-                                        <img src="assets/Serre3.jpg">
+                                    <iframe id="widget_autocomplete_preview" width="350" height="600" frameborder="0" src="https://meteofrance.com/widget/prevision/800210"> </iframe>
 
                                     </div>
 
@@ -239,13 +242,16 @@
                                 <!-- If we need navigation buttons -->
                                 <div class="swiper-button-prev"></div>
                                 <div class="swiper-button-next"></div>
-
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
+
+        <?php $day = date("Y-m-d") ?>
+        <h2>Consommation du jour : <div id="jour" style="display: inline;"><?php echo $day; ?></div>
+        </h2>
         <div id="Graphique"><canvas height="90" id="myChart"></canvas></div>
 
         <!--screen short section-->
@@ -270,7 +276,7 @@
                             <script src="assets/js/bootsnav.js"></script>
                             <script src="JS/Capteurs.js"></script>
                             <script src="JS/consommation.js"></script>
-                            <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+                            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                             <script src="assets/js/plugins.js"></script>
                             <script src="assets/js/main.js"></script>
                         </div>
@@ -280,67 +286,31 @@
         </section>
     </div>
     <select id="minGraph" name="Heure min">
-        <option>Heure Min</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
+        <option selected disabled>Heure Min</option>
+        <?php echo $conso->getHourList($day); ?>
     </select>
 
     <select id="maxGraph" name="Heure max">
-
-        <option>Heure Max</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">10</option>
-        <option value="11">11</option>
-        <option value="12">12</option>
-        <option value="13">13</option>
-        <option value="14">14</option>
-        <option value="15">15</option>
-        <option value="16">16</option>
-        <option value="17">17</option>
-        <option value="18">18</option>
+        <option selected disabled>Heure Max</option>
+        <?php echo $conso->getHourList($day); ?>
     </select>
-
+    <select id="dateSelected">
+        <?php echo $conso->getDateList(); ?>
+    </select>
     <button onclick="setIntervalGraph()">Filtrer la date</button>
 </body>
 
 </html>
 
-<?php
-$conso = new capteurs;
-
-?>
-
 <script>
     //Déclaration des variables.
-    var date = new Date();
     var ctx = document.getElementById('myChart');
     var chart = new Chart(ctx, {
         // Le type de graphique
         type: 'bar',
         // Les données
         data: {
-            labels: [<?php echo $conso->getHour(); ?>],
+            labels: [<?php echo $conso->getOnlyOneDate($day); ?>],
             datasets: [{
                     label: 'Consommation en eau courante en fonction du temps',
                     backgroundColor: 'rgb(51, 209, 255)',
@@ -366,7 +336,7 @@ $conso = new capteurs;
             scales: {
                 x: {
                     min: 0,
-                    max: 15
+                    max: 24
                 }
             }
         }

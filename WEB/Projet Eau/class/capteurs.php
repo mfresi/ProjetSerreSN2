@@ -14,41 +14,67 @@ class capteurs
         } catch (Exception $e) {
             echo $e->getMessage();
         }
-    }
+    } 
 
-    public function getHour()
+    public function getDateList()
     {
-        $conso = $this->_bdd->query('SELECT `heure` FROM `consommation` ORDER BY `id_consommation` DESC');
-        while ($tabConso = $conso->fetch()) {
-            echo ($tabConso['heure'] . ",");
+        $conso = $this->_bdd->query('SELECT DISTINCT `date` FROM `consommation` ORDER BY `date` DESC');
+        while ($tabConso = $conso->fetch()) {?>
+            <option value="<?php echo $tabConso['date']; ?>"><?php echo $tabConso['date']; ?></option><?php
         }
     }
+
+    public function getHourList($dateSelected)
+    {
+        $conso = $this->_bdd->query("SELECT DISTINCT `heure` FROM `consommation` WHERE date = '" . $dateSelected . "' ORDER BY `id_consommation` DESC");
+        while ($tabConso = $conso->fetch()) {?>
+            <option value="<?php echo $tabConso['heure']; ?>"> <?php echo $tabConso['heure'];?></option><?php
+        }
+    }
+
+    public function getOnlyOneDate($dateSelected)
+    {
+        $conso = $this->_bdd->query("SELECT `heure` FROM `consommation` WHERE date = '" . $dateSelected . "'  ORDER BY `id_consommation` ASC");
+        while ($tabConso = $conso->fetch()){
+            echo $tabConso['heure'] . ",";
+        }
+    
+    }
+
+    public function getDate($dateSelected, $heureSelected)
+    {
+        $conso = $this->_bdd->query("SELECT DISTINCT `date`, `heure` FROM `consommation` WHERE heure = '" . $dateSelected . "' AND date = '" . $heureSelected . "'   ORDER BY `id_consommation` ASC");
+        while ($tabConso = $conso->fetch()){
+            echo  $tabConso['heure'] ."-". $tabConso['date'] .",";
+        }
+    } 
+
     public function getWaterConsoPluie()
     {
-        $conso = $this->_bdd->query('SELECT `eau_pluie` FROM `consommation` ORDER BY `id_consommation` DESC');
+        $conso = $this->_bdd->query('SELECT `eau_pluie` FROM `consommation` ORDER BY `date` DESC');
         while ($tabConso = $conso->fetch()) {
-            echo ($tabConso['eau_pluie'] . ",");
+            echo $tabConso['eau_pluie'] . ",";
         }
     }
     public function getWaterConsoCourante()
     {
-        $conso = $this->_bdd->query('SELECT `eau_courante` FROM `consommation` ORDER BY `id_consommation` DESC');
+        $conso = $this->_bdd->query('SELECT `eau_courante` FROM `consommation` ORDER BY `date` DESC');
         while ($tabConso = $conso->fetch()) {
-            echo ($tabConso['eau_courante'] . ",");
+            echo $tabConso['eau_courante'] . ",";
         }
     }
     public function getConsoElec()
     {
-        $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation` ORDER BY `id_consommation` DESC');
+        $conso = $this->_bdd->query('SELECT `electrique` FROM `consommation` ORDER BY `date` DESC');
         while ($tabConso = $conso->fetch()) {
-            echo ($tabConso['electrique'] . ",");
+            echo $tabConso['electrique'] . ",";
         }
     }
    
 
     public function displayArchivage()
     {
-        $conso = $this->_bdd->query("SELECT * FROM `archives` ORDER BY `id_consommation` DESC");
+        $conso = $this->_bdd->query("SELECT * FROM `archives` ORDER BY `date` DESC");
 ?> <?php
         while ($tabConso = $conso->fetch()) { ?>
             <table>
@@ -56,11 +82,15 @@ class capteurs
                 <th>Conso Eau Courante</th>
                 <th>Conso Electrique</th>
                 <th>Heure</th>
+                <th>Date</th>
+
                 <tr>
                     <td><?php echo $tabConso['eau_pluie']; ?></td>
                     <td><?php echo $tabConso['eau_courante']; ?></td>
                     <td><?php echo $tabConso['electrique']; ?></td>
                     <td><?php echo $tabConso['heure']; ?></td>
+                    <td><?php echo $tabConso['date']; ?></td>
+
                 </tr>
             </table> <?php
                     }

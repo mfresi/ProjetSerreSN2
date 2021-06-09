@@ -39,10 +39,10 @@ function UpdateDivNiv1(id, text) {
     if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
     } else if (text == '0') {
-        var e = document.getElementById(id).innerHTML = "La cuve est a l'état bas";
+        var e = document.getElementById(id).innerHTML = "La cuve d'alimentation est a l'état bas";
     }
     else if (text == '1') {
-        var e = document.getElementById(id).innerHTML = "La cuve est remplie";
+        var e = document.getElementById(id).innerHTML = "La cuve d'alimentation est remplie";
     }
 }
 //Va permettre le refresh auto du niveau haut de la cuve (id de la div, text = les données retourné)
@@ -52,9 +52,9 @@ function UpdateDivNiv2(id, text) {
     if (text == "") {
         var e = document.getElementById(id).innerHTML = "Le serveur TCP n'est pas actif";
     } else if (text == "0") {
-        var e = document.getElementById(id).innerHTML = "La cuve est a l'état bas";
+        var e = document.getElementById(id).innerHTML = "Le niveau bas de la cuve n'est pas actif";
     } else if (text == "1") {
-        var e = document.getElementById(id).innerHTML = "La cuve est remplie";
+        var e = document.getElementById(id).innerHTML = "Le niveau bas de la cuve est actif";
     }
 }
 function getNiv2() {
@@ -180,12 +180,12 @@ function addConsoValue() {
     this.chart.data.datasets[0].data.push(7, 8);
 }
 
-refreshValuesTime = 2000;
+refreshValuesTime = 4800;
 //On refresh les valeurs des capteurs
-setInterval("getNiv3()", refreshValuesTime);
 setInterval("getTemperature()", refreshValuesTime);
 setInterval("getNiv1()", refreshValuesTime);
 setInterval("getNiv2()", refreshValuesTime);
+setInterval("getNiv3()", refreshValuesTime);
 setInterval("getPumpStatus()", refreshValuesTime);
 setInterval("getWaterflowStatus()", refreshValuesTime);
 // Pause de 10 minutes pour l'insert en base.

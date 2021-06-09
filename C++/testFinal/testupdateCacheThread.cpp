@@ -1,7 +1,7 @@
 //Module de test pour mettre à jour les valeurs des capteurs et actionneurs dans l'objet SystemData.
 //Dev by Mattei Fresi
 
-//Commande pour compiler -> g++ testupdateCacheThread.cpp ../class/tempMemory.cpp ../class/TCPServeur.cpp ../class/Capteurs.cpp ../class/Actionneurs.cpp ../class/ModBusTCPClient.cpp -o updateCache -lpthread 
+//Commande pour compiler -> g++ testupdateCacheThread.cpp ../class/tempMemory.cpp ../class/TCPServeur.cpp ../class/Capteurs.cpp ../class/Actionneurs.cpp ../class/ModBusTCPClient.cpp -o updateCache -lpthread
 
 #include "../class/tempMemory.h"
 #include "../class/TCPServeur.h"
@@ -13,6 +13,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     float temperature = capteurs.getTemperature();
     int etatWaterLevel = capteurs.getNiveauEau();
     int waterConso = capteurs.getWaterconsommation();
+    vector<int> tempWaterConso;
     bool waterLevel1;
     bool waterLevel2;
     bool pompe;
@@ -29,9 +30,9 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         cout << "On utilise l'eau courante" << endl;
         if (pompe == 1)
         {
-             actionneurs.SetReseauEauCourante();
-             actionneurs.SetPumpOFF();
-             pompe = 0;
+            actionneurs.SetReseauEauCourante();
+            actionneurs.SetPumpOFF();
+            pompe = 0;
         }
         eau = 0;
     }
@@ -46,11 +47,11 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
     {
         waterLevel1 = 1;
         waterLevel2 = 0;
-       
-            cout << "On active la pompe" << endl;
-            actionneurs.SetPumpON();
-            pompe = 1;
-            eau = 1;
+
+        cout << "On active la pompe" << endl;
+        actionneurs.SetPumpON();
+        pompe = 1;
+        eau = 1;
     }
 
     else if (etatWaterLevel == 2)
@@ -61,10 +62,9 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         actionneurs.SetPumpOFF();
         //usleep(1500);
         pompe = 0;
-            cout << "on utilise l'eau de pluie" << endl;
-            actionneurs.SetReseauEauPluie();
-            eau = 1;
-    
+        cout << "on utilise l'eau de pluie" << endl;
+        actionneurs.SetReseauEauPluie();
+        eau = 1;
     }
     else if (etatWaterLevel == 3)
     {
@@ -72,10 +72,28 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         waterLevel2 = 1;
         actionneurs.SetPumpOFF();
         //usleep(1500);
-            cout << "on utilise l'eau de pluie" << endl;
-            actionneurs.SetReseauEauPluie();
-            pompe = 0;
-            eau = 1;
+        cout << "on utilise l'eau de pluie" << endl;
+        actionneurs.SetReseauEauPluie();
+        pompe = 0;
+        eau = 1;
+    }
+
+    tempWaterConso.push_back(waterConso);
+    cout << "Consommation de base : " << tempWaterConso[0] << endl;
+
+    if (eau == 1)
+    {
+        eauPluie = waterConso - tempWaterConso[0];
+        eauPluie = cache->systemData.consoEauPluie += eauPluie;
+
+        cout << "Consommation eau de pluie : " << eauPluie << endl;
+    }
+    if (eau == 0)
+    {  
+        eauCourante = waterConso - tempWaterConso[0];
+        eauCourante = cache->systemData.consoEauCourante += eauCourante;
+
+        cout << "Consommation eau courante : " << eauCourante << endl;
     }
     // Met à jour la valeur du cache SystemData avec les valeurs aléatoires pour le module de test.
     cache->refreshSystemState(temperature, waterLevel1, waterLevel2, waterLevel3, waterConso, ElectricalConso, pompe, eau, eauCourante, eauPluie);
@@ -83,6 +101,7 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
 
 void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
 {
+    bool test;
     srand(time(NULL));
     do
     {
@@ -94,7 +113,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs)
         cout << "Consommation electrique : " << cache->systemData.electricalConsommationValue << endl;
         cout << "Etat de la pompe : " << cache->systemData.pompe << endl;
         cout << "Reseau d'eau : " << cache->systemData.eau << endl;
-        cout << "Consommation eau courant : " << cache->systemData.consoEauCourante << endl;
+        cout << "Consommation eau courante : " << cache->systemData.consoEauCourante << endl;
         cout << "Consommation eau pluie : " << cache->systemData.consoEauPluie << endl;
         cout << "-------------------------------------" << endl;
         // Mettre une attente de 1 minute.
@@ -144,7 +163,7 @@ int main()
                     }
                     else
                     {
-                        cout << "Problème lorque le client essaie de se connecter" << endl;
+                        cout << "Problème lorsque le client essaie de se connecter" << endl;
                     }
                 } while (etat != true);
             }

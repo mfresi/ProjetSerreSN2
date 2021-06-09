@@ -43,7 +43,7 @@ float Capteurs::getTemperature()
 // Return la valeur de l'etat des capteurs de niveau d'eau en cas de succèset -1 en cas d'echec.
 int Capteurs::getNiveauEau()
 {
-    int resultgetWaterLevel = Client.sendBuffer(0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01, 0x02, 0x00, 0x63, 0x00, 0x02);
+    int resultgetWaterLevel = Client.sendBuffer(0x00, 0x01, 0x00, 0x00, 0x00, 0x06, 0x01, 0x02, 0x00, 0x63, 0x00, 0x03);
 
     if (resultgetWaterLevel == true)
     {
@@ -65,6 +65,22 @@ int Capteurs::getNiveauEau()
         else if (waterLevel == 3)
         {
             return 3;
+        }
+        else if (waterLevel == 4)
+        {
+            return 4;
+        }
+        else if (waterLevel == 5)
+        {
+            return 5;
+        }
+        else if (waterLevel == 6)
+        {
+            return 6;
+        }
+        else if (waterLevel == 7)
+        {
+            return 7;
         }
     }
         return -1;

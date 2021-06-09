@@ -1,7 +1,7 @@
 // Programme de test pour la classe BDD.
 // Deb by Mattei Fresi
 
-// Commande pour compiler -> g++ testBdd.cpp ../class/BDD.cpp ../class/Capteurs.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) && ./output
+// Commande pour compiler -> g++ testBdd.cpp ../class/BDD.cpp ../class/ModBusTCPClient.cpp ../class/Capteurs.cpp -o output $(mysql_config --cflags) $(mysql_config --libs) && ./output
 
 // include de la classe BDD.
 #include "../class/BDD.h"
@@ -68,7 +68,7 @@ int main()
             {
                 cout << "Insertion en base OK" << endl;
 
-                if (heures == 16)
+                if (heures == 00)
                 {
                     resultQueryArchivage = Bdd.query(requestToArchive.c_str());
 
