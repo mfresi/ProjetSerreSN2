@@ -126,8 +126,7 @@ $conso = new capteurs;
 
                         <div class="col-md-6">
                             <div class="phone_one phone_attr1 text-center sm-m-top-50">
-                                <h1 class="text-white">Prévision météo : </h1>
-                                <iframe id="widget_autocomplete_preview" width="150" height="300" frameborder="0" src="https://meteofrance.com/widget/prevision/800210"> </iframe>
+                               
                             </div>
                         </div>
 

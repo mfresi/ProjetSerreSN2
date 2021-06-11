@@ -173,7 +173,6 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         waterLevel2 = 1;
         waterLevel3 = 0;
         actionneurs.SetPumpOFF();
-        //usleep(1500);
         pompe = 0;
         cout << "on utilise l'eau de pluie" << endl;
         actionneurs.SetReseauEauPluie();
@@ -185,20 +184,19 @@ void getSystemData(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs
         waterLevel2 = 1;
         waterLevel3 = 0;
         actionneurs.SetPumpON();
-        //usleep(1500);
         cout << "on utilise l'eau de pluie" << endl;
         actionneurs.SetReseauEauPluie();
         pompe = 1;
         eau = 1;
     }
-    // Situation impossible mais on met quand meme pour ne pas avoir des valeurs randoms.
+    // Situation impossible, on initialise les valeurs.
     else if (etatWaterLevel == 4)
     {
         waterLevel1 = 0;
         waterLevel2 = 0;
         waterLevel3 = 1;
     }
-    // Situation impossible mais on met quand meme pour ne pas avoir des valeurs randoms.
+    // Situation impossible, on initialise les valeurs.
     else if (etatWaterLevel == 5)
     {
         waterLevel1 = 1;
@@ -363,7 +361,7 @@ void updateCache(tempMemory *cache, Capteurs capteurs, Actionneurs actionneurs, 
         cout << "Consommation eau pluie : " << cache->systemData.consoEauPluie << endl;
         synchro.unlock();
         // Mettre une attente de 1 minute.
-        this_thread::sleep_for(chrono::seconds(5));
+        this_thread::sleep_for(chrono::seconds(60));
     } while (true);
 }
 
